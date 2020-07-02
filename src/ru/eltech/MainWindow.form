@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="ru.eltech.MainWindow">
+  <grid id="27dc6" binding="content" layout-manager="BorderLayout" hgap="0" vgap="0">
+    <constraints>
+      <xy x="20" y="52" width="676" height="400"/>
+    </constraints>
+    <properties>
+      <minimumSize width="622" height="400"/>
+    </properties>
+    <border type="none"/>
+    <children>
+      <toolbar id="3861e">
+        <constraints border-constraint="North"/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="9a5d5" class="javax.swing.JButton" default-binding="true">
+            <constraints/>
+            <properties>
+              <text value="Auto"/>
+            </properties>
+          </component>
+          <component id="9e834" class="javax.swing.JButton" default-binding="true">
+            <constraints/>
+            <properties>
+              <text value="Start "/>
+            </properties>
+          </component>
+          <component id="cc9f4" class="javax.swing.JButton" default-binding="true">
+            <constraints/>
+            <properties>
+              <text value="Step Backward"/>
+            </properties>
+          </component>
+          <component id="d4e51" class="javax.swing.JButton" default-binding="true">
+            <constraints/>
+            <properties>
+              <text value="Step Forward"/>
+            </properties>
+          </component>
+          <component id="d369f" class="javax.swing.JButton" default-binding="true">
+            <constraints/>
+            <properties>
+              <text value="Pause"/>
+            </properties>
+          </component>
+          <component id="cd92" class="javax.swing.JButton" default-binding="true">
+            <constraints/>
+            <properties>
+              <text value="Stop"/>
+            </properties>
+          </component>
+          <component id="6e29" class="javax.swing.JToolBar$Separator">
+            <constraints/>
+            <properties/>
+          </component>
+          <component id="1aef3" class="javax.swing.JLabel">
+            <constraints/>
+            <properties>
+              <text value="Speed"/>
+            </properties>
+          </component>
+          <component id="7591c" class="javax.swing.JSlider" binding="slider1" default-binding="true">
+            <constraints/>
+            <properties>
+              <paintLabels value="false"/>
+              <paintTicks value="true"/>
+            </properties>
+          </component>
+          <hspacer id="26a56">
+            <constraints/>
+          </hspacer>
+        </children>
+      </toolbar>
+      <toolbar id="c5e53">
+        <constraints border-constraint="South"/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="a485b" class="javax.swing.JLabel">
+            <constraints/>
+            <properties>
+              <text value="Progress"/>
+            </properties>
+          </component>
+          <component id="c0917" class="javax.swing.JProgressBar" binding="progressBar1" default-binding="true">
+            <constraints/>
+            <properties>
+              <value value="30"/>
+            </properties>
+          </component>
+        </children>
+      </toolbar>
+      <component id="34de1" class="ru.eltech.GraphEditor">
+        <constraints border-constraint="Center"/>
+        <properties/>
+      </component>
+      <scrollpane id="4afce">
+        <constraints border-constraint="East"/>
+        <properties>
+          <autoscrolls value="false"/>
+          <horizontalScrollBarPolicy value="31"/>
+          <verticalScrollBarPolicy value="22"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <component id="1455e" class="javax.swing.JTextArea" binding="приложениеЗапущеноЗагреженГрафTextArea" default-binding="true">
+            <constraints/>
+            <properties>
+              <editable value="false"/>
+              <lineWrap value="true"/>
+              <preferredSize width="200" height="17"/>
+              <text value="Приложение запущено.&#10;Загрежен граф из D:\Files\testGraph2.graph&#10;Узлов: 4, Рёбер: 4&#10;Создан узел 5&#10;Удалён узел 5&#10;Граф сохранён в D:\Files\testGraph3.graph&#10;Алгоритм запущен&#10;Алгоритм завершён (14 итераций)&#10;Найдено 2 компоненты сильной связности:&#10;1) 1, 2, 3&#10;2) 4"/>
+              <verifyInputWhenFocusTarget value="true"/>
+              <wrapStyleWord value="true"/>
+            </properties>
+          </component>
+        </children>
+      </scrollpane>
+    </children>
+  </grid>
+</form>
