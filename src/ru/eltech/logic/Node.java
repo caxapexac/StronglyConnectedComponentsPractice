@@ -14,12 +14,13 @@ public class Node {
 
     public Node(Integer id) {
         this.id = id;
+        this.name = id.toString();
     }
 
     private Node(Node other) {
         this.id = other.id;
         this.radius = other.radius;
-        this.position = other.position;
+        this.position = (Point) other.position.clone();
     }
 
     public int getX() {

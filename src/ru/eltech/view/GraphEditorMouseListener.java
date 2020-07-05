@@ -1,15 +1,33 @@
 package ru.eltech.view;
 
+import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public class GraphEditorMouseListener implements MouseListener {
+    private JPopupMenu createPopupMenu(GraphEditor graph, int x, int y) {
+        Integer foundNode = graph.findNode(x, y);
+        if (foundNode != null) {
+            return new GraphPopupMenuNode(graph, foundNode);
+        }
+        Integer foundEdge = graph.findEdge(x, y);
+        if (foundEdge != null) {
+            return new GraphPopupMenuEdge(graph, foundEdge);
+        }
+        return new GraphPopupMenuEmpty(graph);
+    }
+
     @Override
     public void mouseClicked(MouseEvent e) {
         GraphEditor graphEditor = (GraphEditor) e.getSource();
         if (e.getClickCount() == 2) {
-            if (graphEditor.hasSelected()) graphEditor.destroySelected();
-            else graphEditor.createNode(e.getX(), e.getY());
+            if (e.getButton() == MouseEvent.BUTTON1) {
+                if (graphEditor.hasSelected()) graphEditor.destroySelected();
+                else graphEditor.createNode(e.getX(), e.getY());
+            } else if (e.getButton() == MouseEvent.BUTTON3) {
+                JPopupMenu menu = createPopupMenu(graphEditor, e.getX(), e.getY());
+                menu.show(graphEditor, e.getX(), e.getY());
+            }
             e.consume();
         }
     }
@@ -44,4 +62,6 @@ public class GraphEditorMouseListener implements MouseListener {
             graphEditor.endConnecting(e.getX(), e.getY(), true, true);
         }
     }
+
+
 }

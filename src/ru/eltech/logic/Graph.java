@@ -7,8 +7,123 @@ package ru.eltech.logic;
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 
 public class Graph {
+    private int nextNodeId = 1;
+    private int nextEdgeId = 1;
+    private final HashMap<Integer, Node> nodeMap = new HashMap<>();
+    private final HashMap<Integer, Edge> edgeMap = new HashMap<>();
+
+    public Node createNode() {
+        while (nodeMap.containsKey(nextNodeId)) nextNodeId++;
+        Node node = new Node(nextNodeId++);
+        nodeMap.put(node.id, node);
+        return node;
+    }
+
+    public Edge createEdge(Node from, Node to) {
+        Edge edge = createEdge();
+        edge.source = from.id;
+        edge.target = to.id;
+        return edge;
+    }
+
+    private Edge createEdge() {
+        while (nodeMap.containsKey(nextEdgeId)) nextEdgeId++;
+        Edge edge = new Edge(nextEdgeId++);
+        edgeMap.put(edge.id, edge);
+        return edge;
+    }
+
+    public boolean containsNode(Node node) {
+        return nodeMap.get(node.id) == node;
+    }
+
+    public boolean containsEdge(Edge edge) {
+        return edgeMap.get(edge.id) == edge;
+    }
+
+    public boolean destroyNode(Node node) {
+        Node removed = nodeMap.remove(node.id);
+        if (removed == node) {
+            edgeMap.values().removeIf(e -> e.source.equals(node.id) || e.target.equals(node.id));
+            return true;
+        }
+        nodeMap.put(removed.id, removed);
+        return false;
+    }
+
+    public boolean destroyEdge(Edge edge) {
+        Edge removed = edgeMap.remove(edge.id);
+        if (removed == edge) return true;
+        edgeMap.put(removed.id, removed);
+        return false;
+    }
+
+
+    public Collection<Node> getNodes() {
+        return nodeMap.values();
+    }
+
+    public Node getNode(Integer nodeId) {
+        return nodeMap.get(nodeId);
+    }
+
+
+    public Edge findEdge(Node from, Node to) {
+        if (!containsNode(from) || !containsNode(to))
+            return null;
+        return findEdge(from.id, to.id);
+    }
+
+    public Edge findEdge(Integer from, Integer to) {
+        for (Edge edge : getEdges())
+            if ((edge.fromNode == from && edge.toNode == to) || (edge.fromNode == to && edge.toNode == from)) {
+                return edge;
+            }
+        return null;
+    }
+
+
+    public Edge getEdge(Integer edgeId) {
+        return edgeMap.get(edgeId);
+    }
+
+    public Collection<Edge> getEdges() {
+        return edgeMap.values();
+    }
+
+    public Graph set(Graph other) {
+        clear();
+        this.nextNodeId = other.nextNodeId;
+        this.nextEdgeId = other.nextEdgeId;
+        for (Node node : other.getNodes()) nodeMap.put(node.id, node.clone());
+        for (Edge edge : other.getEdges()) edgeMap.put(edge.id, edge.clone());
+        return this;
+    }
+
+    public Graph clear() {
+        this.nextNodeId = 1;
+        this.nextEdgeId = 1;
+        nodeMap.clear();
+        edgeMap.clear();
+        return this;
+    }
+
+    //region SERVICE
+
+    public void invertAllEdges() {
+        for (Edge edge : getEdges()) edge.invert();
+    }
+
+    //endregion
+
+
+}
+
+public class GraphOld {
     private ArrayList<Node> nodes;
     private ArrayList<Edge> edges;
 

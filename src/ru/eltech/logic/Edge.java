@@ -25,6 +25,12 @@ public class Edge {
         return this;
     }
 
+    public void invert() {
+        Integer temp = source;
+        source = target;
+        target = temp;
+    }
+
     @Override
     public Edge clone() {
         return new Edge(this);
