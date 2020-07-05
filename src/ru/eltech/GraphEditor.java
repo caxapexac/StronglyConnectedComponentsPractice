@@ -10,12 +10,12 @@ public class GraphEditor extends JPanel {
     public GraphEditor() {
         //InputStream;
         //OutputStream
-        
+
     }
 
     @Override
     public void paint(Graphics g) {
-        g.drawString("Hello World", 30 ,30);
+        g.drawString("Hello World", 30, 30);
     }
 
 }

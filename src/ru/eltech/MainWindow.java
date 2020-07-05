@@ -6,7 +6,7 @@ public class MainWindow extends JFrame {
     private JPanel content;
     private JSlider slider1;
     private JProgressBar progressBar1;
-    private JTextArea приложениеЗапущеноЗагреженГрафTextArea;
+    private JTextArea Log;
     private GraphEditor graphEditor1;
 
     public MainWindow() {
@@ -18,7 +18,7 @@ public class MainWindow extends JFrame {
     private void initialize() {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setContentPane(content);
-        setSize(1024,760);
+        setSize(1024, 760);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         //setUndecorated(true);
 
@@ -45,8 +45,7 @@ public class MainWindow extends JFrame {
         setJMenuBar(menuBar);
     }
 
-    private void createUIComponents()
-    {
+    private void createUIComponents() {
         graphEditor1 = new GraphEditor();
     }
 }

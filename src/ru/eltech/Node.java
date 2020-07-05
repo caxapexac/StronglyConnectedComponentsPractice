@@ -1,7 +1,7 @@
 package ru.eltech;
 
 /**
- ** @author Samoilova Anna
+ * * @author Samoilova Anna
  */
 
 import java.awt.*;
@@ -12,12 +12,12 @@ public class Node {
     private Point position;
     private ArrayList<Edge> edges;
 
-    public Node(String id){
+    public Node(String id) {
         this.id = id;
         edges = new ArrayList<Edge>();
     }
 
-    public String getId(){
+    public String getId() {
         return id;
     }
 
@@ -29,22 +29,22 @@ public class Node {
         this.position = position;
     }
 
-    public ArrayList<Edge> getEdges(){
+    public ArrayList<Edge> getEdges() {
         return edges;
     }
 
-    public void addEdge(Edge edge){
-        if(edge!=null){
+    public void addEdge(Edge edge) {
+        if (edge != null) {
             edges.add(edge);
         }
     }
 
-    public void removeEdge(Node target){
+    public void removeEdge(Node target) {
         int i = 0;
-        while (i<edges.size()){
-            if (edges.get(i).getTarget().getId().equals(target.getId())){
+        while (i < edges.size()) {
+            if (edges.get(i).getTarget().getId().equals(target.getId())) {
                 edges.remove(edges.get(i));
-            }else{
+            } else {
                 i++;
             }
         }

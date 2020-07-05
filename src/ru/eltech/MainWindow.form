@@ -104,7 +104,7 @@
         </properties>
         <border type="none"/>
         <children>
-          <component id="1455e" class="javax.swing.JTextArea" binding="приложениеЗапущеноЗагреженГрафTextArea" default-binding="true">
+          <component id="1455e" class="javax.swing.JTextArea" binding="Log">
             <constraints/>
             <properties>
               <editable value="false"/>
