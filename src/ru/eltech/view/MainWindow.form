@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="ru.eltech.MainWindow">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="ru.eltech.view.MainWindow">
   <grid id="27dc6" binding="content" layout-manager="BorderLayout" hgap="0" vgap="0">
     <constraints>
       <xy x="20" y="52" width="676" height="400"/>
@@ -91,7 +91,7 @@
           </component>
         </children>
       </toolbar>
-      <component id="34de1" class="ru.eltech.GraphEditor">
+      <component id="34de1" class="ru.eltech.view.GraphEditor" binding="graphEditor">
         <constraints border-constraint="Center"/>
         <properties/>
       </component>

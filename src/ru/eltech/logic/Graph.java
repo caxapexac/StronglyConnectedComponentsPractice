@@ -1,4 +1,4 @@
-package ru.eltech;
+package ru.eltech.logic;
 
 /**
  * * @author Samoilova Anna
