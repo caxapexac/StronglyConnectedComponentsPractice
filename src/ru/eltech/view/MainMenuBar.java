@@ -1,43 +1,53 @@
 package ru.eltech.view;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
+/**
+ * Обёртка над панелью меню в {@link MainWindow}
+ */
+@SuppressWarnings("FieldCanBeLocal")
 public class MainMenuBar extends JMenuBar implements ActionListener {
-    private MainWindow parent;
+    private final MainWindow parent;
 
     private final JMenu fileMenu = new JMenu("File");
-    private final JMenuItem newGraphMenuItem = new JMenuItem("Новый граф", KeyEvent.VK_N);
-    private final JMenuItem showExampleMenuItem = new JMenuItem("Загрузить пример графа", KeyEvent.VK_P);
-    private final JMenuItem saveMenuItem = new JMenuItem("Сохранить...", KeyEvent.VK_Z);
-    private final JMenuItem loadMenuItem = new JMenuItem("Загрузить...", KeyEvent.VK_W);
+    private final JMenuItem newGraphMenuItem = new JMenuItem("Новый граф");
+    private final JMenuItem showExampleMenuItem = new JMenuItem("Загрузить пример графа");
+    private final JMenuItem saveMenuItem = new JMenuItem("Сохранить...");
+    private final JMenuItem loadMenuItem = new JMenuItem("Загрузить...");
+    // TODO
 
     private final JMenu editMenu = new JMenu("Edit");
-    private final JMenuItem nodesMenuItem = new JMenuItem("nodesMenuItem...", KeyEvent.VK_W);
-    private final JMenuItem edgesMenuItem = new JMenuItem("edgesMenuItem...", KeyEvent.VK_K);
+    private final JMenuItem nodesMenuItem = new JMenuItem("nodesMenuItem...");
+    private final JMenuItem edgesMenuItem = new JMenuItem("edgesMenuItem...");
+    // TODO
 
     private final JMenu viewMenu = new JMenu("View");
-    private final JMenuItem drawGridCheckBoxMenuItem = new JCheckBoxMenuItem("Показать сетку");
+    private final JMenuItem startMenuItem = new JMenuItem("edgesMenuItem...");
+    // TODO
 
     private final JMenu helpMenu = new JMenu("Help");
-    private final JMenuItem appMenuItem = new JMenuItem("О программе...", KeyEvent.VK_P);
-    private final JMenuItem authorMenuItem = new JMenuItem("Об авторах...", KeyEvent.VK_A);
+    private final JMenuItem appMenuItem = new JMenuItem("О программе...");
+    private final JMenuItem authorMenuItem = new JMenuItem("Об авторах...");
 
     public MainMenuBar(MainWindow parent) {
         this.parent = parent;
-    }
-
-    private void initializeMenus() {
         newGraphMenuItem.addActionListener(this);
+        newGraphMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         showExampleMenuItem.addActionListener(this);
+        showExampleMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         saveMenuItem.addActionListener(this);
+        saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         loadMenuItem.addActionListener(this);
+        loadMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         nodesMenuItem.addActionListener(this);
         edgesMenuItem.addActionListener(this);
-        drawGridCheckBoxMenuItem.addActionListener(this);
+        startMenuItem.addActionListener(this);
         appMenuItem.addActionListener(this);
+        appMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PERIOD, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         authorMenuItem.addActionListener(this);
 
         fileMenu.add(newGraphMenuItem);
@@ -52,7 +62,7 @@ public class MainMenuBar extends JMenuBar implements ActionListener {
         editMenu.add(edgesMenuItem);
         add(editMenu);
 
-        viewMenu.add(drawGridCheckBoxMenuItem);
+        viewMenu.add(startMenuItem);
         add(viewMenu);
 
         helpMenu.add(appMenuItem);
@@ -60,13 +70,16 @@ public class MainMenuBar extends JMenuBar implements ActionListener {
         add(helpMenu);
     }
 
+    /**
+     * Проброс событий меню в {@link MainWindow}
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         Object eSource = e.getSource();
         if (eSource == newGraphMenuItem) {
-            //graphPanel.createNewGraph();
+            parent.createNewGraph();
         } else if (eSource == showExampleMenuItem) {
-            //graphPanel.showExampleGraph();
+            parent.loadExampleGraph();
         } else if (eSource == saveMenuItem) {
             parent.serializeGraph();
         } else if (eSource == loadMenuItem) {
@@ -75,12 +88,12 @@ public class MainMenuBar extends JMenuBar implements ActionListener {
             parent.showNodesList();
         } else if (eSource == edgesMenuItem) {
             parent.showEdgesList();
-        } else if (eSource == drawGridCheckBoxMenuItem) {
-            //graphPanel.enableGrid(drawGridCheckBoxMenuItem.isSelected());
+        } else if (eSource == startMenuItem) {
+            parent.startAlgorithm();
         } else if (eSource == appMenuItem) {
-            //showInstruction();
+            parent.showInstruction();
         } else if (eSource == authorMenuItem) {
-            //showAuthorInfo();
+            parent.showAuthorsInfo();
         }
     }
 }

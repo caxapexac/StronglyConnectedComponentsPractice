@@ -1,9 +1,8 @@
 package ru.eltech.logic;
 
 /**
- * * @author Samoilova Anna
+ * @author Samoilova Anna
  */
-
 public class Edge {
     public final Integer id;
     public Integer source;
@@ -13,16 +12,16 @@ public class Edge {
         this.id = id;
     }
 
+    public Edge(Integer id, Node source, Node target) {
+        this(id);
+        this.source = source.id;
+        this.target = target.id;
+    }
+
     public Edge(Edge other) {
         this.id = other.id;
         this.source = other.source;
         this.target = other.target;
-    }
-
-    public Edge fromTo(Node fromNode, Node toNode) {
-        this.source = fromNode.id;
-        this.target = toNode.id;
-        return this;
     }
 
     public void invert() {
@@ -31,6 +30,7 @@ public class Edge {
         target = temp;
     }
 
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     @Override
     public Edge clone() {
         return new Edge(this);

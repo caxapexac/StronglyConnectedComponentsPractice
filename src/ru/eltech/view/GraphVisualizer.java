@@ -7,14 +7,29 @@ import ru.eltech.logic.Node;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Класс, отвечающий за логику отображения графа
+ */
 public class GraphVisualizer extends JPanel {
     /**
-     * Стандартый стиль линии
+     * Стандартный стиль линии
      */
     protected static final BasicStroke DEFAULT_STROKE = new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+    /**
+     * Отступ между дугой и нодой
+     */
     protected static final double ARROW_OFFSET = 10f;
+    /**
+     * Ширина крыльев дуги
+     */
     protected static final double ARROW_WIDTH = 5f;
+    /**
+     * Длина тела дуги
+     */
     protected static final double ARROW_LENGTH = 15f;
+    /**
+     * Расстояние, после которого у дуги перестаёт отображаться тело
+     */
     protected static final double EPSILON = 0.0000000001d;
 
     protected Graph renderGraph = new Graph();
@@ -40,9 +55,7 @@ public class GraphVisualizer extends JPanel {
     }
 
     /**
-     * Отрисовка графа
-     *
-     * @param g
+     * Отрисовка графа через {@link Graphics2D}
      */
     @Override
     public void paint(Graphics g) {
@@ -60,10 +73,7 @@ public class GraphVisualizer extends JPanel {
     }
 
     /**
-     * Позволяет настроить стиль дуги в GraphEditor
-     *
-     * @param g
-     * @param edge
+     * Позволяет настроить стиль дуги в {@link GraphEditor}
      */
     protected void decorateEdge(Graphics2D g, Edge edge) {
         g.setColor(Color.BLACK);
@@ -108,10 +118,7 @@ public class GraphVisualizer extends JPanel {
 
 
     /**
-     * Позволяет настроить стиль ноды в GraphEditor
-     *
-     * @param g
-     * @param node
+     * Позволяет настроить стиль ноды в {@link GraphEditor}
      */
     protected void decorateNode(Graphics2D g, Node node) {
         g.setColor(Color.BLACK);

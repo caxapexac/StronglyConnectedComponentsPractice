@@ -1,6 +1,9 @@
 package ru.eltech.view;
 
+import ru.eltech.logic.Algorithm;
 import ru.eltech.logic.Graph;
+import ru.eltech.logic.GraphPlayer;
+import ru.eltech.logic.KosarajuAlgorithm;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -15,6 +18,8 @@ public class MainWindow extends JFrame {
     private GraphEditor graphEditor;
 
     private final Graph graph = new Graph();
+    private final GraphPlayer graphPlayer = new GraphPlayer();
+    private final Algorithm algorithm = new KosarajuAlgorithm();
 
 
     public MainWindow() {
@@ -33,7 +38,7 @@ public class MainWindow extends JFrame {
 
         //setUndecorated(true);
         //UIManager.put("OptionPane.messageFont", new Font("Monospaced", Font.BOLD, 12));
-        //graphPanel.deserializeGraph(AUTOSAVE_FILE);
+        //graphPanel.deserializeGraph(AUTOSAVE_FILE); TODO auto load on start
         setJMenuBar(new MainMenuBar(this));
 
         addWindowListener(new WindowAdapter() {
@@ -47,6 +52,16 @@ public class MainWindow extends JFrame {
                 windowClosed(event);
             }
         });
+    }
+
+    //region ACTIONS
+
+    public void createNewGraph() {
+        // TODO
+    }
+
+    public void loadExampleGraph() {
+        // TODO
     }
 
     public void serializeGraph() {
@@ -92,12 +107,26 @@ public class MainWindow extends JFrame {
     }
 
     public void showNodesList() {
+        // TODO
         //String nodesList = graphEditor.getGraph().getListOfNodes();
-        //JOptionPane.showMessageDialog(this, nodesList,"Lista wкzіуw grafu", JOptionPane.INFORMATION_MESSAGE);
+        //JOptionPane.showMessageDialog(this, nodesList, "text", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public void showEdgesList() {
-        //String nodesList = graphEditor.getGraph().getListOfEdges();
-        //JOptionPane.showMessageDialog(this, nodesList,"Lista wкzіуw grafu", JOptionPane.INFORMATION_MESSAGE);
+        // TODO
     }
+
+    public void startAlgorithm() {
+        // TODO
+    }
+
+    public void showInstruction() {
+        // TODO
+    }
+
+    public void showAuthorsInfo() {
+        // TODO
+    }
+
+    //endregion
 }

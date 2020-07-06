@@ -6,6 +6,10 @@ import ru.eltech.logic.Node;
 
 import java.awt.*;
 
+/**
+ * Класс, отвечающий за логику редактирования графа
+ * @author caxap
+ */
 public class GraphEditor extends GraphVisualizer {
     /**
      * Ширина коллайдера дуги
@@ -45,18 +49,14 @@ public class GraphEditor extends GraphVisualizer {
     }
 
     /**
-     * Имеет ли граф выделенные ноды/дуги
-     *
-     * @return
+     * @return Имеет ли граф выделенные ноды/дуги
      */
     public boolean hasSelected() {
         return selectedNode != null || selectedEdge != null;
     }
 
     /**
-     * Имеет ли граф создаваемую дугу
-     *
-     * @return
+     * @return Имеет ли граф создаваемую дугу
      */
     public boolean isConnecting() {
         return connectingSourceNode != null;
@@ -65,10 +65,9 @@ public class GraphEditor extends GraphVisualizer {
     /**
      * Выделяет ноду или дугу, нода в приоритете
      *
-     * @param x
-     * @param y
      * @return выделилось ли что-либо
      */
+    @SuppressWarnings("UnusedReturnValue")
     public boolean select(int x, int y) {
         if (innerSelectNode(x, y)) {
             selectedEdge = null;
@@ -95,9 +94,6 @@ public class GraphEditor extends GraphVisualizer {
 
     /**
      * Инициирует перемещение выделенного объекта
-     *
-     * @param x
-     * @param y
      */
     public void startDrag(int x, int y) {
         draggingLast.move(x, y);
@@ -107,9 +103,6 @@ public class GraphEditor extends GraphVisualizer {
 
     /**
      * Перемещает выделенный объект, нода в приоритете
-     *
-     * @param x
-     * @param y
      */
     public void drag(int x, int y) {
         int mouseDX = x - draggingLast.x;
@@ -131,9 +124,6 @@ public class GraphEditor extends GraphVisualizer {
 
     /**
      * Завершает процесс перемещения объекта
-     *
-     * @param x
-     * @param y
      */
     public void endDrag(int x, int y) {
         drag(x, y);
@@ -143,9 +133,6 @@ public class GraphEditor extends GraphVisualizer {
 
     /**
      * Начало создания дуги. От ноды под координаитой x,y до координат мыши
-     *
-     * @param x
-     * @param y
      */
     public void startConnecting(int x, int y) {
         connectingSourceNode = innerFindNode(x, y);
@@ -154,9 +141,6 @@ public class GraphEditor extends GraphVisualizer {
 
     /**
      * Обновляет позицию создаваемой дуги, если она существует
-     *
-     * @param x
-     * @param y
      */
     public void connecting(int x, int y) {
         if (connectingSourceNode == null) return;
@@ -167,8 +151,8 @@ public class GraphEditor extends GraphVisualizer {
     /**
      * Завершает создание дуги в точке x,y
      *
-     * @param x
-     * @param y
+     * @param x                x
+     * @param y                y
      * @param willCreateNode   будет ли создаваться новая нода, если на координатах x,y нет ноды
      * @param willDestroyClone будет ли удаляться дуга, если происходит попытка создать совпадающую с ней дугу
      */
@@ -193,9 +177,6 @@ public class GraphEditor extends GraphVisualizer {
 
     /**
      * Создаёт ноду на координатах x,y
-     *
-     * @param x
-     * @param y
      */
     public void createNode(int x, int y) {
         renderGraph.createNode(x, y);
@@ -230,8 +211,6 @@ public class GraphEditor extends GraphVisualizer {
     /**
      * Поиск ноды по координатам x,y
      *
-     * @param x
-     * @param y
      * @return id найденной ноды, иначе null
      */
     public Integer findNode(int x, int y) {
@@ -255,8 +234,6 @@ public class GraphEditor extends GraphVisualizer {
     /**
      * Поиск дуги по координатам x,y
      *
-     * @param x
-     * @param y
      * @return id найденной дуги, иначе null
      */
     public Integer findEdge(int x, int y) {
@@ -271,14 +248,14 @@ public class GraphEditor extends GraphVisualizer {
         for (Edge edge : renderGraph.getEdges()) {
             Node source = renderGraph.getNode(edge.source);
             Node target = renderGraph.getNode(edge.target);
-            int dx = target.position.x - source.position.x;
-            int dy = target.position.y - source.position.y;
+            int dx = target.getX() - source.getX();
+            int dy = target.getY() - source.getY();
             double dist = Math.sqrt(dx * dx + dy * dy);
             double vx = dx / dist;
             double vy = dy / dist;
-            double lx = vx * (x - source.position.x) + vy * (y - source.position.y);
+            double lx = vx * (x - source.getX()) + vy * (y - source.getY());
             if (lx < 0 || lx > dist) continue;
-            double ly = vy * (x - source.position.x) - vx * (y - source.position.y);
+            double ly = vy * (x - source.getX()) - vx * (y - source.getY());
             double distToLine = Math.abs(ly);
             if (distToLine > EDGE_DRAG_DISTANCE) continue;
             if (foundEdge == null || distToLine < foundDist) {
@@ -322,47 +299,63 @@ public class GraphEditor extends GraphVisualizer {
         }
     }
 
-    //region popups
+    //region ACTIONS POPUP
 
     public void destroyEdge(Integer id) {
-
+        // TODO
     }
 
     public void changeEdgeStroke(Integer id) {
-
+        // TODO
     }
 
     public void changeEdgeColor(Integer id) {
-
+        // TODO
     }
 
     public void createNewNode(int x, int y) {
+        // TODO
+    }
 
+    public void clearGraph() {
+        // TODO
     }
 
     public void removeNode(Integer id) {
-
+        // TODO
     }
 
     public void initializeAddEdge(Integer id) {
-
+        // TODO
     }
 
     public void changeNodeRadius(Integer id) {
-
+        // TODO
     }
 
     public void changeNodeColor(Integer id) {
-
+        // TODO
     }
 
     public void changeNodeText(Integer id) {
-
+        // TODO
     }
 
+    //endregion
 
+    //region ACTIONS KEYSTROKE
 
+    public void moveGraphStep(int x, int y) {
+        // TODO?
+    }
 
+    public void setColor(Color color) {
+        // TODO
+    }
+
+    public void changeSize(int delta) {
+        // TODO?
+    }
 
     //endregion
 }

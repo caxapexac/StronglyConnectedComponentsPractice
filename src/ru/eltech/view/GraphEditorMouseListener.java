@@ -4,19 +4,10 @@ import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+/**
+ * Логика нажатия клавиш мыши в {@link GraphEditor}
+ */
 public class GraphEditorMouseListener implements MouseListener {
-    private JPopupMenu createPopupMenu(GraphEditor graph, int x, int y) {
-        Integer foundNode = graph.findNode(x, y);
-        if (foundNode != null) {
-            return new GraphPopupMenuNode(graph, foundNode);
-        }
-        Integer foundEdge = graph.findEdge(x, y);
-        if (foundEdge != null) {
-            return new GraphPopupMenuEdge(graph, foundEdge);
-        }
-        return new GraphPopupMenuEmpty(graph);
-    }
-
     @Override
     public void mouseClicked(MouseEvent e) {
         GraphEditor graphEditor = (GraphEditor) e.getSource();
@@ -30,6 +21,18 @@ public class GraphEditorMouseListener implements MouseListener {
             }
             e.consume();
         }
+    }
+
+    private JPopupMenu createPopupMenu(GraphEditor graph, int x, int y) {
+        Integer foundNode = graph.findNode(x, y);
+        if (foundNode != null) {
+            return new GraphPopupMenuNode(graph, foundNode);
+        }
+        Integer foundEdge = graph.findEdge(x, y);
+        if (foundEdge != null) {
+            return new GraphPopupMenuEdge(graph, foundEdge);
+        }
+        return new GraphPopupMenuEmpty(graph);
     }
 
     @Override

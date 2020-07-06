@@ -3,10 +3,10 @@ package ru.eltech.view;
 import javax.swing.*;
 
 /**
- * Контектстное меню при клике на ноду
+ * Контекстное меню при клике ПКМ*2 на {@link ru.eltech.logic.Node}
  */
 public class GraphPopupMenuNode extends JPopupMenu {
-    public GraphPopupMenuNode (GraphEditor graphEditor, Integer id) {
+    public GraphPopupMenuNode(GraphEditor graphEditor, Integer id) {
         JMenuItem removeNodeMenuItem = new JMenuItem("Удалить узел");
         removeNodeMenuItem.addActionListener((action) -> graphEditor.removeNode(id));
         add(removeNodeMenuItem);

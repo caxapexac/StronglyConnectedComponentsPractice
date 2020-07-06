@@ -3,10 +3,10 @@ package ru.eltech.view;
 import javax.swing.*;
 
 /**
- * Контектстное меню при клике на дугу
+ * Контекстное меню при клике ПКМ*2 на {@link ru.eltech.logic.Edge}
  */
 public class GraphPopupMenuEdge extends JPopupMenu {
-    public GraphPopupMenuEdge (GraphEditor graphEditor, Integer id) {
+    public GraphPopupMenuEdge(GraphEditor graphEditor, Integer id) {
         JMenuItem removeEdgeMenuItem = new JMenuItem("Удалить дугу");
         removeEdgeMenuItem.addActionListener((action) -> graphEditor.destroyEdge(id));
         add(removeEdgeMenuItem);

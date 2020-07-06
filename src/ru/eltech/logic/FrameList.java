@@ -1,9 +1,10 @@
 package ru.eltech.logic;
 
-import ru.eltech.logic.Graph;
-
 import java.util.ArrayList;
 
+/**
+ * TODO
+ */
 public class FrameList {
     private ArrayList<Graph> frames;
     public FrameList() {

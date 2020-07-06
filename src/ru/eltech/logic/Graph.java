@@ -1,9 +1,5 @@
 package ru.eltech.logic;
 
-/**
- * * @author Samoilova Anna
- */
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -11,6 +7,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
+/**
+ * @author Samoilova Anna
+ */
 public class Graph {
     private int nextNodeId = 1;
     private int nextEdgeId = 1;
@@ -28,6 +27,7 @@ public class Graph {
         return node;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public Edge createEdge(Node from, Node to) {
         Edge edge = createEdge();
         edge.source = from.id;
