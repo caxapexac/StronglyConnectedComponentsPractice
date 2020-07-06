@@ -1,11 +1,8 @@
-package ru.eltech;
+package ru.eltech.logic;
 
-import ru.eltech.logic.Edge;
+import ru.eltech.logic.Algorithm;
+import ru.eltech.logic.FrameList;
 import ru.eltech.logic.Graph;
-import ru.eltech.logic.Node;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 public class KosarajuAlgorithm implements Algorithm {
     @Override

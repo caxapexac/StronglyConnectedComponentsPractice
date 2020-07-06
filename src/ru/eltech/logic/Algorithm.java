@@ -1,6 +1,4 @@
-package ru.eltech;
-
-import ru.eltech.logic.Graph;
+package ru.eltech.logic;
 
 public interface Algorithm {
     FrameList process(Graph context);
