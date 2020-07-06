@@ -4,8 +4,9 @@ package ru.eltech.logic;
  * * @author Samoilova Anna
  */
 
-import java.awt.*;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -16,7 +17,11 @@ public class Graph {
     private final HashMap<Integer, Node> nodeMap = new HashMap<>();
     private final HashMap<Integer, Edge> edgeMap = new HashMap<>();
 
-    public Node createNode() {
+    public Node createNode(int x, int y) {
+        return createNode().setXY(x, y);
+    }
+
+    private Node createNode() {
         while (nodeMap.containsKey(nextNodeId)) nextNodeId++;
         Node node = new Node(nextNodeId++);
         nodeMap.put(node.id, node);
@@ -35,6 +40,56 @@ public class Graph {
         Edge edge = new Edge(nextEdgeId++);
         edgeMap.put(edge.id, edge);
         return edge;
+    }
+
+    public Collection<Node> getNodes() {
+        return nodeMap.values();
+    }
+
+    public Collection<Edge> getEdges() {
+        return edgeMap.values();
+    }
+
+    public int getNodesCount() {
+        return nodeMap.size();
+    }
+
+    public int getEdgesCount() {
+        return edgeMap.size();
+    }
+
+    public Node getNode(Integer nodeId) {
+        return nodeMap.get(nodeId);
+    }
+
+    public Edge getEdge(Integer edgeId) {
+        return edgeMap.get(edgeId);
+    }
+
+    public Edge getEdge(Node source, Node target, boolean ignoreDirections) {
+        if (!containsNode(source) || !containsNode(target)) return null;
+        return getEdge(source.id, target.id, ignoreDirections);
+    }
+
+    public Edge getEdge(Integer source, Integer target, boolean ignoreDirections) {
+        for (Edge edge : getEdges()) {
+            if ((edge.source.equals(source) && edge.target.equals(target)) || (!ignoreDirections && edge.source.equals(target) && edge.target.equals(source))) {
+                return edge;
+            }
+        }
+        return null;
+    }
+
+    public Collection<Edge> getEdgesFromNode(Node node) {
+        return getEdgesFromNodeNoAlloc(node, new ArrayList<>());
+    }
+
+    public Collection<Edge> getEdgesFromNodeNoAlloc(Node node, Collection<Edge> result) {
+        result.clear();
+        for (Edge edge : getEdges()) {
+            if (edge.source.equals(node.id)) result.add(edge);
+        }
+        return result;
     }
 
     public boolean containsNode(Node node) {
@@ -62,39 +117,6 @@ public class Graph {
         return false;
     }
 
-
-    public Collection<Node> getNodes() {
-        return nodeMap.values();
-    }
-
-    public Node getNode(Integer nodeId) {
-        return nodeMap.get(nodeId);
-    }
-
-
-    public Edge findEdge(Node from, Node to) {
-        if (!containsNode(from) || !containsNode(to))
-            return null;
-        return findEdge(from.id, to.id);
-    }
-
-    public Edge findEdge(Integer from, Integer to) {
-        for (Edge edge : getEdges())
-            if ((edge.fromNode == from && edge.toNode == to) || (edge.fromNode == to && edge.toNode == from)) {
-                return edge;
-            }
-        return null;
-    }
-
-
-    public Edge getEdge(Integer edgeId) {
-        return edgeMap.get(edgeId);
-    }
-
-    public Collection<Edge> getEdges() {
-        return edgeMap.values();
-    }
-
     public Graph set(Graph other) {
         clear();
         this.nextNodeId = other.nextNodeId;
@@ -104,140 +126,48 @@ public class Graph {
         return this;
     }
 
-    public Graph clear() {
+    public void clear() {
         this.nextNodeId = 1;
         this.nextEdgeId = 1;
         nodeMap.clear();
         edgeMap.clear();
-        return this;
-    }
-
-    //region SERVICE
-
-    public void invertAllEdges() {
-        for (Edge edge : getEdges()) edge.invert();
-    }
-
-    //endregion
-
-
-}
-
-public class GraphOld {
-    private ArrayList<Node> nodes;
-    private ArrayList<Edge> edges;
-
-    public Graph() {
-        nodes = new ArrayList<Node>();
-        edges = new ArrayList<Edge>();
-    }
-
-    private int getNodeIndex(String id) {
-        for (int i = 0; i < nodes.size(); i++) {
-            if (nodes.get(i).getId().equals(id)) {
-                return i;
-            }
-        }
-        return 0;  // todo
     }
 
     public void load(InputStream stream) throws IOException, NumberFormatException {
-        nodes.clear();
-        edges.clear();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-        String line = reader.readLine();
-        int node_numb;
-        try {
-            node_numb = Integer.parseInt(line);
-        } catch (NumberFormatException e) {
-            throw e;
-        }
-        for (int i = 0; i < node_numb; i++) {
-            line = reader.readLine();
-            String[] splitStrs = line.split("[ ]");
-            try {
-                createNode(splitStrs[0], new Point(Integer.parseInt(splitStrs[1]), Integer.parseInt(splitStrs[2])));
-            } catch (NumberFormatException e) {
-                throw e;
-            }
-        }
-        line = reader.readLine();
-        int edge_numb;
-        try {
-            edge_numb = Integer.parseInt(line);
-        } catch (NumberFormatException e) {
-            throw e;
-        }
-        for (int i = 0; i < edge_numb; i++) {
-            line = reader.readLine();
-            String[] splitStrs = line.split("[ ]");
-            createEdge(nodes.get(getNodeIndex(splitStrs[0])), nodes.get(getNodeIndex(splitStrs[1])));
-        }
+//        nodes.clear();
+//        edges.clear();
+//        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+//        String line = reader.readLine();
+//        int node_numb;
+//        try {
+//            node_numb = Integer.parseInt(line);
+//        } catch (NumberFormatException e) {
+//            throw e;
+//        }
+//        for (int i = 0; i < node_numb; i++) {
+//            line = reader.readLine();
+//            String[] splitStrs = line.split("[ ]");
+//            try {
+//                createNode(splitStrs[0], new Point(Integer.parseInt(splitStrs[1]), Integer.parseInt(splitStrs[2])));
+//            } catch (NumberFormatException e) {
+//                throw e;
+//            }
+//        }
+//        line = reader.readLine();
+//        int edge_numb;
+//        try {
+//            edge_numb = Integer.parseInt(line);
+//        } catch (NumberFormatException e) {
+//            throw e;
+//        }
+//        for (int i = 0; i < edge_numb; i++) {
+//            line = reader.readLine();
+//            String[] splitStrs = line.split("[ ]");
+//            createEdge(nodes.get(getNodeIndex(splitStrs[0])), nodes.get(getNodeIndex(splitStrs[1])));
+//        }
     }
 
     public void save(OutputStream stream) {
 
     }
-
-    public int getNodesCount() {
-        return nodes.size();
-    }
-
-    public Node getNode(int index) {
-        return nodes.get(index);
-    }
-
-    public Node createNode(String name, Point position) {
-        Node newNode = new Node(name);
-        newNode.setPosition(position);
-        nodes.add(newNode);
-        return newNode;
-    }
-
-    public Edge createEdge(Node source, Node target) {
-        Edge newEdge = new Edge(source, target);
-        edges.add(newEdge);
-        source.addEdge(newEdge);
-        return newEdge;
-    }
-
-    public void removeNode(int index) {
-        int i = 0;
-        while (i < edges.size()) {
-            if (edges.get(i).getSource().getId().equals(nodes.get(index).getId()) || edges.get(i).getTarget().getId().equals(nodes.get(index).getId())) {
-                removeEdge(edges.get(i).getSource(), edges.get(i).getTarget());
-            } else {
-                i++;
-            }
-        }
-        nodes.remove(index);
-    }
-
-    public void removeNode(String id) {
-        int i = 0;
-        while (i < edges.size()) {
-            if (edges.get(i).getSource().getId().equals(id) || edges.get(i).getTarget().getId().equals(id)) {
-                removeEdge(edges.get(i).getSource(), edges.get(i).getTarget());
-            } else {
-                i++;
-            }
-        }
-        for (i = 0; i < nodes.size(); i++) {
-            if (nodes.get(i).getId().equals(id)) {
-                nodes.remove(nodes.get(i));
-                break;
-            }
-        }
-    }
-
-    public void removeEdge(Node source, Node target) {
-        for (int i = 0; i < edges.size(); i++) {
-            if (edges.get(i).getSource().getId().equals(source.getId()) && edges.get(i).getTarget().getId().equals(target.getId())) {
-                edges.remove(edges.get(i));
-                break;
-            }
-        }
-        source.removeEdge(target);
-    }
 }
-

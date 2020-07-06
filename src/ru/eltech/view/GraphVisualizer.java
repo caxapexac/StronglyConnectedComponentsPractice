@@ -12,6 +12,10 @@ public class GraphVisualizer extends JPanel {
      * Стандартый стиль линии
      */
     protected static final BasicStroke DEFAULT_STROKE = new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+    protected static final double ARROW_OFFSET = 10f;
+    protected static final double ARROW_WIDTH = 5f;
+    protected static final double ARROW_LENGTH = 15f;
+    protected static final double EPSILON = 0.0000000001d;
 
     protected Graph renderGraph = new Graph();
 
@@ -69,8 +73,39 @@ public class GraphVisualizer extends JPanel {
     private void displayEdge(Graphics2D g, Edge edge) {
         Node source = renderGraph.getNode(edge.source);
         Node target = renderGraph.getNode(edge.target);
-        g.drawLine(source.position.x, source.position.y, target.position.x, target.position.y);
+        int dx = target.position.x - source.position.x;
+        int dy = target.position.y - source.position.y;
+        double distance = Math.sqrt(dx * dx + dy * dy);
+        double vx = dx / distance;
+        double vy = dy / distance;
+        if (distance > EPSILON) {
+            double startOffset = ARROW_OFFSET + source.radius;
+            double endOffset = ARROW_OFFSET + target.radius;
+            if (distance > startOffset + endOffset) {
+                int startX = (int) Math.round(source.position.x + vx * startOffset);
+                int startY = (int) Math.round(source.position.y + vy * startOffset);
+                int endX = (int) Math.round(target.position.x - vx * endOffset);
+                int endY = (int) Math.round(target.position.y - vy * endOffset);
+                int leftX = (int) Math.round(endX - vy * ARROW_WIDTH - vx * ARROW_LENGTH);
+                int leftY = (int) Math.round(endY + vx * ARROW_WIDTH - vy * ARROW_LENGTH);
+                int rightX = (int) Math.round(endX + vy * ARROW_WIDTH - vx * ARROW_LENGTH);
+                int rightY = (int) Math.round(endY - vx * ARROW_WIDTH - vy * ARROW_LENGTH);
+                g.drawLine(startX, startY, endX, endY); // Тело дуги
+                g.drawLine(leftX, leftY, endX, endY); // Левое крыло стрелки
+                g.drawLine(endX, endY, rightX, rightY); // Правое крыло стрелки
+            } else {
+                int endX = (int) Math.round((target.position.x + source.position.x) * 0.5d);
+                int endY = (int) Math.round((target.position.y + source.position.y) * 0.5d);
+                int leftX = (int) Math.round(endX - vy * ARROW_WIDTH - vx * ARROW_LENGTH);
+                int leftY = (int) Math.round(endY + vx * ARROW_WIDTH - vy * ARROW_LENGTH);
+                int rightX = (int) Math.round(endX + vy * ARROW_WIDTH - vx * ARROW_LENGTH);
+                int rightY = (int) Math.round(endY - vx * ARROW_WIDTH - vy * ARROW_LENGTH);
+                g.drawLine(leftX, leftY, endX, endY); // Левое крыло стрелки
+                g.drawLine(endX, endY, rightX, rightY); // Правое крыло стрелки
+            }
+        }
     }
+
 
     /**
      * Позволяет настроить стиль ноды в GraphEditor

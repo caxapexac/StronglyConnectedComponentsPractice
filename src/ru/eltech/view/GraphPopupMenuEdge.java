@@ -8,7 +8,7 @@ import javax.swing.*;
 public class GraphPopupMenuEdge extends JPopupMenu {
     public GraphPopupMenuEdge (GraphEditor graphEditor, Integer id) {
         JMenuItem removeEdgeMenuItem = new JMenuItem("Удалить дугу");
-        removeEdgeMenuItem.addActionListener((action) -> graphEditor.removeEdge(id));
+        removeEdgeMenuItem.addActionListener((action) -> graphEditor.destroyEdge(id));
         add(removeEdgeMenuItem);
         addSeparator();
         JMenuItem changeEdgeStrokeMenuItem = new JMenuItem("Изменить толщину дуги");

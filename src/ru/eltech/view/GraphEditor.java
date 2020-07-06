@@ -4,9 +4,7 @@ import ru.eltech.logic.Edge;
 import ru.eltech.logic.Graph;
 import ru.eltech.logic.Node;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
 public class GraphEditor extends GraphVisualizer {
     /**
@@ -177,17 +175,18 @@ public class GraphEditor extends GraphVisualizer {
     public void endConnecting(int x, int y, boolean willCreateNode, boolean willDestroyClone) {
         if (connectingSourceNode == null) return;
         Node node = innerFindNode(x, y);
-        if (node != null) {
-            Edge currentEdge = renderGraph.findEdge(connectingSourceNode, node);
-            if (currentEdge != null) {
-                if (willDestroyClone) renderGraph.destroyEdge(currentEdge);
-            } else
-                renderGraph.createEdge(connectingSourceNode, node);
-        } else if (willCreateNode) {
-            Node newNode = renderGraph.createNode().setXY(x, y);
-            renderGraph.createEdge(connectingSourceNode, newNode);
+        if (node != connectingSourceNode) {
+            if (node != null) {
+                Edge currentEdge = renderGraph.getEdge(connectingSourceNode, node, true);
+                if (currentEdge != null) {
+                    if (willDestroyClone) renderGraph.destroyEdge(currentEdge);
+                } else
+                    renderGraph.createEdge(connectingSourceNode, node);
+            } else if (willCreateNode) {
+                Node newNode = renderGraph.createNode(x, y);
+                renderGraph.createEdge(connectingSourceNode, newNode);
+            }
         }
-
         connectingSourceNode = null;
         repaint();
     }
@@ -199,7 +198,7 @@ public class GraphEditor extends GraphVisualizer {
      * @param y
      */
     public void createNode(int x, int y) {
-        renderGraph.createNode().setXY(x, y);
+        renderGraph.createNode(x, y);
         repaint();
     }
 
@@ -322,6 +321,50 @@ public class GraphEditor extends GraphVisualizer {
             g.setColor(Color.GREEN);
         }
     }
+
+    //region popups
+
+    public void destroyEdge(Integer id) {
+
+    }
+
+    public void changeEdgeStroke(Integer id) {
+
+    }
+
+    public void changeEdgeColor(Integer id) {
+
+    }
+
+    public void createNewNode(int x, int y) {
+
+    }
+
+    public void removeNode(Integer id) {
+
+    }
+
+    public void initializeAddEdge(Integer id) {
+
+    }
+
+    public void changeNodeRadius(Integer id) {
+
+    }
+
+    public void changeNodeColor(Integer id) {
+
+    }
+
+    public void changeNodeText(Integer id) {
+
+    }
+
+
+
+
+
+    //endregion
 }
 
 

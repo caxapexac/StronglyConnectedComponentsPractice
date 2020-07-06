@@ -1,5 +1,7 @@
 package ru.eltech;
 
+import ru.eltech.logic.Graph;
+
 import java.util.ArrayList;
 
 public class FrameList {
