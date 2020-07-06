@@ -41,4 +41,9 @@ public class Node {
     public Node clone() {
         return new Node(this);
     }
+
+    @Override
+    public String toString() {
+        return (name + ' ' + position.x + ' ' + position.y);
+    }
 }

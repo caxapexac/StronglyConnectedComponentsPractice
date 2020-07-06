@@ -40,12 +40,12 @@ public class GraphEditor extends GraphVisualizer {
 
     @Override
     public void setRenderGraph(Graph renderGraph) {
-        super.setRenderGraph(renderGraph);
         draggingNode = null;
         selectedNode = null;
         draggingEdge = null;
         selectedEdge = null;
         connectingSourceNode = null;
+        super.setRenderGraph(renderGraph);
     }
 
     /**
@@ -359,6 +359,5 @@ public class GraphEditor extends GraphVisualizer {
 
     //endregion
 }
-
 
 

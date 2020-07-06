@@ -1,11 +1,10 @@
 package ru.eltech.logic;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.StringTokenizer;
 
 /**
  * @author Samoilova Anna
@@ -60,6 +59,13 @@ public class Graph {
 
     public Node getNode(Integer nodeId) {
         return nodeMap.get(nodeId);
+    }
+
+    public Node getNode(String nodeName) {
+        for (Node node : getNodes()) {
+            if (node.name.equals(nodeName)) return node;
+        }
+        return null;
     }
 
     public Edge getEdge(Integer edgeId) {
@@ -133,41 +139,49 @@ public class Graph {
         edgeMap.clear();
     }
 
-    public void load(InputStream stream) throws IOException, NumberFormatException {
-//        nodes.clear();
-//        edges.clear();
-//        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-//        String line = reader.readLine();
-//        int node_numb;
-//        try {
-//            node_numb = Integer.parseInt(line);
-//        } catch (NumberFormatException e) {
-//            throw e;
-//        }
-//        for (int i = 0; i < node_numb; i++) {
-//            line = reader.readLine();
-//            String[] splitStrs = line.split("[ ]");
-//            try {
-//                createNode(splitStrs[0], new Point(Integer.parseInt(splitStrs[1]), Integer.parseInt(splitStrs[2])));
-//            } catch (NumberFormatException e) {
-//                throw e;
-//            }
-//        }
-//        line = reader.readLine();
-//        int edge_numb;
-//        try {
-//            edge_numb = Integer.parseInt(line);
-//        } catch (NumberFormatException e) {
-//            throw e;
-//        }
-//        for (int i = 0; i < edge_numb; i++) {
-//            line = reader.readLine();
-//            String[] splitStrs = line.split("[ ]");
-//            createEdge(nodes.get(getNodeIndex(splitStrs[0])), nodes.get(getNodeIndex(splitStrs[1])));
-//        }
+    public Graph load(InputStream stream) throws IOException {
+        clear();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+        try {
+            int nodesCount = Integer.parseInt(reader.readLine());
+            for (int i = 0; i < nodesCount; i++) {
+                StringTokenizer tokenizer = new StringTokenizer(reader.readLine());
+                String name = tokenizer.nextToken();
+                int posX = Integer.parseInt(tokenizer.nextToken());
+                int posY = Integer.parseInt(tokenizer.nextToken());
+                Node node = createNode(posX, posY);
+                node.name = name;
+            }
+            int edgesCount = Integer.parseInt(reader.readLine());
+            for (int i = 0; i < edgesCount; i++) {
+                StringTokenizer tokenizer = new StringTokenizer(reader.readLine());
+                Node source = getNode(tokenizer.nextToken());
+                Node target = getNode(tokenizer.nextToken());
+                if (source == null || target == null) {
+                    System.out.println("Edge with missed nodes " + source + " " + target);
+                    continue;
+                }
+                createEdge(source, target);
+            }
+        }
+        catch (Exception e) {
+            throw new IOException(e);
+        }
+        return this;
     }
 
     public void save(OutputStream stream) {
-
+        PrintWriter p = new PrintWriter(stream);
+        p.println(nodeMap.size());
+        for (Node node : nodeMap.values()) {
+            p.println(String.format("%s %d %d", node.name, node.getX(), node.getY()));
+        }
+        p.println(edgeMap.size());
+        for (Edge edge : edgeMap.values()) {
+            Node source = getNode(edge.source);
+            Node target = getNode(edge.target);
+            p.println(String.format("%s %s", source.name, target.name));
+        }
+        p.flush();
     }
 }

@@ -35,4 +35,9 @@ public class Edge {
     public Edge clone() {
         return new Edge(this);
     }
+
+    @Override
+    public String toString() {
+        return ("" + source + ' ' + target);
+    }
 }

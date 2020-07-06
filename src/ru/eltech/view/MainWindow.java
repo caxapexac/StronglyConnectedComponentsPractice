@@ -93,14 +93,15 @@ public class MainWindow extends JFrame {
         fc.addChoosableFileFilter(filter);
         fc.setFileFilter(filter);
 
-        int choosenOption = fc.showOpenDialog(this);
-        if (choosenOption == JFileChooser.APPROVE_OPTION) {
+        int chosenOption = fc.showOpenDialog(this);
+        if (chosenOption == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fc.getSelectedFile();
             try (FileInputStream fis = new FileInputStream(selectedFile)){
-                graphEditor.getGraph(graph).load(fis);
+                graphEditor.setRenderGraph(graph.load(fis));
                 JOptionPane.showMessageDialog(null, "Граф загружен успешно " + selectedFile.getAbsolutePath());
                 repaint();
             } catch (IOException e) {
+                e.printStackTrace();
                 JOptionPane.showMessageDialog(this, e.getMessage(), "Файл не найден!", JOptionPane.ERROR_MESSAGE);
             }
         }
