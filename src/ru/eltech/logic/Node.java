@@ -10,6 +10,11 @@ public class Node {
     public String name;
     public int radius = 10;
     public Point position = new Point(0, 0);
+    //для алгоритма
+    public boolean visited = false;
+    //для визуализации
+    public boolean highlighted = false;
+    public int strongComponentId = -1;//по умолчанию не в компоненте
 
     public Node(Integer id) {
         this.id = id;

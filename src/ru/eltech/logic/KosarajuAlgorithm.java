@@ -4,113 +4,130 @@ import ru.eltech.logic.Algorithm;
 import ru.eltech.logic.FrameList;
 import ru.eltech.logic.Graph;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 public class KosarajuAlgorithm implements Algorithm {
-    @Override
-    public FrameList process(Graph context) {
-        return null;
+
+    private ArrayList<Node> timeOutList;
+    private FrameList frames;
+
+    public KosarajuAlgorithm() {
+        //вершины по времени выхода в порядке возрастания
+        timeOutList = new ArrayList<Node>();
+        //возвращаемые фреймы
+        frames = new FrameList();
     }
 
+    /**
+     * @param context Граф, над которым требуется выполнить алгоритм
+     * @return
+     * @implNote sort nodes by timeout
+     * result goes to global "timeOutList"
+     * frames are created by timeOut() and written down to global "frames
+     */
+    @Override
+    public FrameList process(Graph context) {
 
-//    private ArrayList<Node> timeOutList;
-//    private ArrayList<ArrayList<Node>> components;
-//    private FrameList frames;
-//
-//    public KosarajuAlgorithm() {
-//        //вершины по времени выхода в порядке возрастания
-//        timeOutList = new ArrayList<Node>();
-//        //список найденных компонент
-//        components = new ArrayList<>();
-//        //возвращаемые фреймы
-//        frames = new FrameList();
-//    }
-//
-//    @Override
-//    public FrameList process(Graph context) {
-//        //copy graph (not to invert context)
-//        //TODO
-//
-//        //sort nodes by timeout
-//        //result goes to global "timeOutList"
-//        //frames are created by timeOut() and written down to global "frames"
-//        Collection<Node> nodes = context.getNodes();
-//        for(Node node : nodes) {
-//            if(!node.isVisited()) {
-//                timeOut(node);
-//            }
-//        }
-//
-//        //TODO
-//        //сброс выделения всех нод и ребер
-//        //Возможно это должен быть метод самого графа
-//
-//        //this func also creates frames and writes them to global "frames"
-//        reverseGraph(context);
-//
-//        //TODO
-//        //сброс выделения всех нод и ребер
-//        //Возможно это должен быть метод самого графа
-//
-//        //found components are stored in global "components"
-//        //findComponent() also creates frames and store them in "frames"
-//        for(Node currentNode : timeOutList) {
-//            if(!currentNode.isInComponent()) {
-//                ArrayList<Node> newComponent = new ArrayList<>();
-//                findComponent(newComponent, currentNode, context);
-//                components.add(newComponent);
-//            }
-//        }
-//        //returns global "frames"
-//        return frames;
-//    }
-//
-//
-//    //первый обход находит время выхода
-//    private void timeOut(Node startNode, Graph graph) {
-//        startNode.setVisited(true);
-//        frames.add(graph);//for animation
-//        ArrayList<Edge> edgeList = graph.findAllEdgesWithSourceNode(startNode.getId());
-//        Node nextNode = null;
-//        for(Edge currentEdge : edgeList) {
-//            //TODO
-//            //currentEdge.setHighlight(true);
-//            //frames.add(graph); for animation
-//            nextNode = currentEdge.getDestination();
-//            if (!nextNode.isVisited()) {
-//                timeOut(nextNode, graph);
-//            }
-//        }
-//        timeOutList.add(nextNode);
-//    }
-//
-//    private void reverseGraph(Graph graph) {
-//        Node from, to;
-//        for(Edge current : graph.getEdges()) {
-//            from = current.getSource();
-//            to = current.getTarget();
-//            current.setSource(to);
-//            current.setTarget(from);
-//            frames.add(graph);//for animation
-//        }
-//    }
-//
-//    //places all nodes in component containing given node in newComponent
-//    private void findComponent(ArrayList<Node> newComponent, Node node, Graph graph) {
-//        newComponent.add(node);
-//        //возможно, стоит раскрашивать компоненты в разные цвета, тогда нода
-//        //должна хранить свою принадлежность компоненте
-//        node.setVisited();//for animation
-//        frames.add(graph);//for animation
-//        ArrayList<Edge> edgeList = graph.findAllEdgesWithSourceNode(node.getId());
-//        for(Edge currentEdge : edgeList) {
-//            //TODO
-//            //currentEdge.setHighlight(true);
-//            //frames.add(graph); for animation
-//            Node nextNode = currentEdge.getDestination();
-//            if (!nextNode.isInComponent()) {
-//                findComponent(newComponent, nextNode, graph);
-//            }
-//        }
-//    }
-//
+        Collection<Node> nodes = context.getNodes();
+        for (Node node : nodes) {
+            if (!node.visited) {
+                timeOut(node, context);
+            }
+        }
 
+        clearVisitedNodes(context);
+        clearHighlightedNodes(context);
+        clearHighlightedEdges(context);
+
+        reverseGraph(context);
+
+        clearHighlightedEdges(context);
+
+        int currentComponentId = 0;
+        for (Node currentNode : timeOutList) {
+            if (currentNode.strongComponentId == -1) {
+                findComponent(currentComponentId, currentNode, context);
+                ++currentComponentId;
+            }
+        }
+
+        clearVisitedNodes(context);
+        clearHighlightedNodes(context);
+        clearHighlightedEdges(context);
+        frames.add(context);
+
+        return frames;
+    }
+
+    private void timeOut(Node startNode, Graph graph) {
+        startNode.visited = true;
+
+        startNode.highlighted = true;
+        frames.add(graph);//for animation
+
+        Collection<Edge> edgeList = graph.getEdgesFromNode(startNode);
+        Node nextNode = null;
+        for (Edge currentEdge : edgeList) {
+
+            currentEdge.highlighted = true;
+            frames.add(graph);
+
+            nextNode = graph.getNode(currentEdge.target);
+            if (!nextNode.visited) {
+                timeOut(nextNode, graph);
+            }
+        }
+        timeOutList.add(nextNode);
+    }
+
+    /**
+     * @param graph
+     * @implNote Разворачивает ребра графа
+     */
+    private void reverseGraph(Graph graph) {
+        Node from, to;
+        for (Edge current : graph.getEdges()) {
+            current.invert();
+            current.highlighted = true;
+            frames.add(graph);//for animation
+        }
+    }
+
+    private void findComponent(int componentId, Node node, Graph graph) {
+
+        node.strongComponentId = componentId;
+        node.visited = true;
+
+        node.highlighted = true;
+        frames.add(graph);
+
+        Collection<Edge> edgeList = graph.getEdgesFromNode(node);
+        for (Edge currentEdge : edgeList) {
+            currentEdge.highlighted = true;
+            frames.add(graph);
+            Node nextNode = graph.getNode(currentEdge.target);
+            if (nextNode.strongComponentId == -1) {
+                findComponent(componentId, nextNode, graph);
+            }
+        }
+    }
+
+    private void clearVisitedNodes(Graph graph) {
+        for (Node node : graph.getNodes()) {
+            node.visited = false;
+        }
+    }
+
+    private void clearHighlightedNodes(Graph graph) {
+        for (Node node : graph.getNodes()) {
+            node.highlighted = false;
+        }
+    }
+
+    private void clearHighlightedEdges(Graph graph) {
+        for (Edge edge : graph.getEdges()) {
+            edge.highlighted = false;
+        }
+    }
 }

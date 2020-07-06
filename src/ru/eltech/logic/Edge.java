@@ -7,6 +7,8 @@ public class Edge {
     public final Integer id;
     public Integer source;
     public Integer target;
+    //for animation
+    public boolean highlighted = false;
 
     public Edge(Integer id) {
         this.id = id;
