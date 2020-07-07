@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="ru.eltech.view.MainWindow">
+  <grid id="27dc6" binding="content" layout-manager="BorderLayout" hgap="0" vgap="0">
+    <constraints>
+      <xy x="20" y="52" width="676" height="400"/>
+    </constraints>
+    <properties>
+      <minimumSize width="622" height="400"/>
+    </properties>
+    <border type="none"/>
+    <children>
+      <toolbar id="3861e">
+        <constraints border-constraint="North"/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="9a5d5" class="javax.swing.JButton" binding="toolBarAutoButton">
+            <constraints/>
+            <properties>
+              <icon value="resources/icons/repeat-24px.png"/>
+              <text value=""/>
+            </properties>
+          </component>
+          <component id="9e834" class="javax.swing.JButton" binding="toolBarStartButton">
+            <constraints/>
+            <properties>
+              <icon value="resources/icons/play_arrow-24px.png"/>
+              <text value=""/>
+            </properties>
+          </component>
+          <component id="cc9f4" class="javax.swing.JButton" binding="toolBarStepBackButton">
+            <constraints/>
+            <properties>
+              <icon value="resources/icons/skip_previous-24px.png"/>
+              <text value=""/>
+            </properties>
+          </component>
+          <component id="d4e51" class="javax.swing.JButton" binding="toolBarStepForwardButton">
+            <constraints/>
+            <properties>
+              <icon value="resources/icons/skip_next-24px.png"/>
+              <text value=""/>
+            </properties>
+          </component>
+          <component id="d369f" class="javax.swing.JButton" binding="toolBarPauseButton">
+            <constraints/>
+            <properties>
+              <icon value="resources/icons/pause-24px.png"/>
+              <text value=""/>
+            </properties>
+          </component>
+          <component id="cd92" class="javax.swing.JButton" binding="toolBarStopButton">
+            <constraints/>
+            <properties>
+              <icon value="resources/icons/stop-24px.png"/>
+              <text value=""/>
+            </properties>
+          </component>
+          <component id="6e29" class="javax.swing.JToolBar$Separator">
+            <constraints/>
+            <properties/>
+          </component>
+          <component id="1aef3" class="javax.swing.JLabel">
+            <constraints/>
+            <properties>
+              <text value="Speed"/>
+            </properties>
+          </component>
+          <component id="7591c" class="javax.swing.JSlider" binding="toolBarSpeedSlider">
+            <constraints/>
+            <properties>
+              <paintLabels value="false"/>
+              <paintTicks value="true"/>
+            </properties>
+          </component>
+          <hspacer id="26a56">
+            <constraints/>
+          </hspacer>
+        </children>
+      </toolbar>
+      <toolbar id="c5e53">
+        <constraints border-constraint="South"/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="a485b" class="javax.swing.JLabel">
+            <constraints/>
+            <properties>
+              <text value="Progress"/>
+            </properties>
+          </component>
+          <component id="c0917" class="javax.swing.JProgressBar" binding="bottomProgressBar">
+            <constraints/>
+            <properties>
+              <value value="30"/>
+            </properties>
+          </component>
+        </children>
+      </toolbar>
+      <component id="34de1" class="ru.eltech.view.GraphEditor" binding="graphEditor">
+        <constraints border-constraint="Center"/>
+        <properties/>
+      </component>
+      <component id="f229f" class="javax.swing.JTextPane" binding="loggerTextPane">
+        <constraints border-constraint="East"/>
+        <properties/>
+      </component>
+    </children>
+  </grid>
+</form>
