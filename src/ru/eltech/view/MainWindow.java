@@ -23,7 +23,6 @@ public class MainWindow extends JFrame {
     private JSlider toolBarSpeedSlider;
     private JProgressBar bottomProgressBar;
 
-    private final Graph graph = new Graph();
     private final GraphPlayer graphPlayer = new GraphPlayer();
     private final Algorithm algorithm = new KosarajuAlgorithm();
 
@@ -76,7 +75,6 @@ public class MainWindow extends JFrame {
     }
 
     public void serializeGraph() {
-        if (graphEditor.getGraph(graph) == null) return;
         JFileChooser fc = new JFileChooser(".");
         fc.setMultiSelectionEnabled(false);
         FileNameExtensionFilter filter = new FileNameExtensionFilter(" *.graph", "graph");
@@ -89,7 +87,7 @@ public class MainWindow extends JFrame {
             String fileName = selectedFile.getAbsolutePath();
             if (!fileName.endsWith(".graph")) selectedFile = new File(fileName + ".graph");
             try (FileOutputStream fos = new FileOutputStream(selectedFile)) {
-                graphEditor.getGraph(graph).save(fos);
+                graphEditor.getGraphCopy().save(fos);
                 JOptionPane.showMessageDialog(null, "Граф сохранён успешно " + selectedFile.getAbsolutePath());
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(this, e.getMessage(), "Файл не найден!", JOptionPane.ERROR_MESSAGE);
@@ -108,7 +106,7 @@ public class MainWindow extends JFrame {
         if (chosenOption == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fc.getSelectedFile();
             try (FileInputStream fis = new FileInputStream(selectedFile)) {
-                graphEditor.setRenderGraph(graph.load(fis));
+                graphEditor.setGraphCopy(new Graph().load(fis));
                 JOptionPane.showMessageDialog(null, "Граф загружен успешно " + selectedFile.getAbsolutePath());
                 repaint();
             } catch (IOException e) {
@@ -130,7 +128,7 @@ public class MainWindow extends JFrame {
 
     public void startAlgorithm() {
         // TODO
-        //FrameList frames = KosarajuAlgorithm( graphEditor.getGraph() );
+        FrameList frames = algorithm.process(graphEditor.getGraphCopy());
         //graphPlayer.play(frames);
     }
 
@@ -169,10 +167,10 @@ public class MainWindow extends JFrame {
     }
 
     /**
-     * @apiNote Shows message dialog, takes message text from a html-encoded file in resources folder
      * @param filename
      * @param title
      * @param messageType
+     * @apiNote Shows message dialog, takes message text from a html-encoded file in resources folder
      */
     private void showHtmlFormattedMessageDialog(String filename, String title, int messageType) {
         String formattedText = readResourceFileAsString(filename, "UTF-8");

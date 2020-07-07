@@ -10,10 +10,27 @@ import java.util.StringTokenizer;
  * @author Samoilova Anna
  */
 public class Graph {
-    private int nextNodeId = 1;
-    private int nextEdgeId = 1;
-    private final HashMap<Integer, Node> nodeMap = new HashMap<>();
-    private final HashMap<Integer, Edge> edgeMap = new HashMap<>();
+    private int nextNodeId;
+    private int nextEdgeId;
+    private final HashMap<Integer, Node> nodeMap;
+    private final HashMap<Integer, Edge> edgeMap;
+
+    public Graph() {
+        nextNodeId = 1;
+        nextEdgeId = 1;
+        nodeMap = new HashMap<>();
+        edgeMap = new HashMap<>();
+    }
+
+    public Graph(Graph other) {
+        this.nextNodeId = other.nextNodeId;
+        this.nextEdgeId = other.nextEdgeId;
+        this.nodeMap = new HashMap<>();
+        for (Node node : other.getNodes()) nodeMap.put(node.id, node.clone());
+        this.edgeMap = new HashMap<>();
+        for (Edge edge : other.getEdges()) edgeMap.put(edge.id, edge.clone());
+    }
+
 
     public Node createNode(int x, int y) {
         while (nodeMap.containsKey(nextNodeId)) nextNodeId++;
@@ -87,6 +104,7 @@ public class Graph {
         return result;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean containsNode(Node node) {
         return nodeMap.get(node.id) == node;
     }
@@ -110,15 +128,6 @@ public class Graph {
         if (removed == edge) return true;
         edgeMap.put(removed.id, removed);
         return false;
-    }
-
-    public Graph set(Graph other) {
-        clear();
-        this.nextNodeId = other.nextNodeId;
-        this.nextEdgeId = other.nextEdgeId;
-        for (Node node : other.getNodes()) nodeMap.put(node.id, node.clone());
-        for (Edge edge : other.getEdges()) edgeMap.put(edge.id, edge.clone());
-        return this;
     }
 
     public void clear() {
@@ -152,8 +161,7 @@ public class Graph {
                 }
                 createEdge(source, target);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new IOException(e);
         }
         return this;
