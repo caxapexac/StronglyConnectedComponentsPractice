@@ -6,6 +6,7 @@ import ru.eltech.logic.Node;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 
 /**
  * Класс, отвечающий за логику отображения графа
@@ -31,6 +32,10 @@ public class GraphVisualizer extends JPanel {
      * Расстояние, после которого у дуги перестаёт отображаться тело
      */
     protected static final double EPSILON = 0.0000000001d;
+    /**
+     * Шрифт для отображения имён нод
+     */
+    protected static final Font font = new Font(Font.DIALOG, Font.BOLD, 24);
 
     protected Graph renderGraph = new Graph();
 
@@ -60,6 +65,9 @@ public class GraphVisualizer extends JPanel {
     @Override
     public void paint(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2d.setColor(Color.WHITE);
         g2d.fillRect(0, 0, getWidth(), getHeight());
         for (Edge edge : renderGraph.getEdges()) {
@@ -142,6 +150,15 @@ public class GraphVisualizer extends JPanel {
         g.setStroke(DEFAULT_STROKE);
     }
 
+    /**
+     * Позволяет настроить стиль текста внутри ноды в {@link GraphEditor}
+     */
+    protected void decorateNodeText(Graphics2D g, Node node) {
+        g.setFont(font);
+        g.setColor(Color.BLACK);
+        g.setStroke(DEFAULT_STROKE);
+    }
+
     private void displayNode(Graphics2D g, Node node) {
         int radius = node.getRadius();
         int diameter = radius * 2;
@@ -149,8 +166,7 @@ public class GraphVisualizer extends JPanel {
         g.fillOval(node.getPosition().x - radius, node.getPosition().y - radius, diameter, diameter);
         decorateNodeOuter(g, node);
         g.drawOval(node.getPosition().x - radius, node.getPosition().y - radius, diameter, diameter);
-
-        // TODO name decorator
+        decorateNodeText(g, node);
         FontMetrics fm = g.getFontMetrics();
         int tx = node.getPosition().x - fm.stringWidth(node.getName()) / 2;
         int ty = node.getPosition().y - fm.getHeight() / 2 + fm.getAscent();

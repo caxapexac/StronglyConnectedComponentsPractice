@@ -312,6 +312,11 @@ public class GraphEditor extends GraphVisualizer {
         }
     }
 
+    @Override
+    protected void decorateNodeText(Graphics2D g, Node node) {
+        super.decorateNodeText(g, node);
+    }
+
     //region ACTIONS POPUP
 
     public void destroyEdge(Integer id) {

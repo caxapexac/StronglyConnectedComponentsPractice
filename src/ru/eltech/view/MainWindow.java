@@ -6,13 +6,22 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.*;
 import java.io.*;
+import java.util.logging.Logger;
 
 public class MainWindow extends JFrame {
+    public static Logger log = Logger.getLogger(MainWindow.class.getName());
+
     private JPanel content;
-    private JSlider slider1;
-    private JProgressBar progressBar1;
-    private JTextArea Log;
+    private JTextPane loggerTextPane;
     private GraphEditor graphEditor;
+    private JButton toolBarAutoButton;
+    private JButton toolBarStartButton;
+    private JButton toolBarStepBackButton;
+    private JButton toolBarStepForwardButton;
+    private JButton toolBarPauseButton;
+    private JButton toolBarStopButton;
+    private JSlider toolBarSpeedSlider;
+    private JProgressBar bottomProgressBar;
 
     private final Graph graph = new Graph();
     private final GraphPlayer graphPlayer = new GraphPlayer();
@@ -50,11 +59,15 @@ public class MainWindow extends JFrame {
                 windowClosed(event);
             }
         });
+        log.addHandler(new LoggerTextAreaHandler(loggerTextPane));
     }
 
     //region ACTIONS
 
     public void createNewGraph() {
+        log.info("Create new graph");
+        log.warning("Create new graph");
+        log.severe("Create new graph");
         // TODO
     }
 
