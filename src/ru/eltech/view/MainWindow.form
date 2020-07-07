@@ -17,42 +17,42 @@
           <component id="9a5d5" class="javax.swing.JButton" default-binding="true">
             <constraints/>
             <properties>
-              <icon value="resources/repeat-24px.png"/>
+              <icon value="resources/icons/repeat-24px.png"/>
               <text value=""/>
             </properties>
           </component>
           <component id="9e834" class="javax.swing.JButton" default-binding="true">
             <constraints/>
             <properties>
-              <icon value="resources/play_arrow-24px.png"/>
+              <icon value="resources/icons/play_arrow-24px.png"/>
               <text value=""/>
             </properties>
           </component>
           <component id="cc9f4" class="javax.swing.JButton" default-binding="true">
             <constraints/>
             <properties>
-              <icon value="resources/skip_previous-24px.png"/>
+              <icon value="resources/icons/skip_previous-24px.png"/>
               <text value=""/>
             </properties>
           </component>
           <component id="d4e51" class="javax.swing.JButton" default-binding="true">
             <constraints/>
             <properties>
-              <icon value="resources/skip_next-24px.png"/>
+              <icon value="resources/icons/skip_next-24px.png"/>
               <text value=""/>
             </properties>
           </component>
           <component id="d369f" class="javax.swing.JButton" default-binding="true">
             <constraints/>
             <properties>
-              <icon value="resources/pause-24px.png"/>
+              <icon value="resources/icons/pause-24px.png"/>
               <text value=""/>
             </properties>
           </component>
           <component id="cd92" class="javax.swing.JButton" default-binding="true">
             <constraints/>
             <properties>
-              <icon value="resources/stop-24px.png"/>
+              <icon value="resources/icons/stop-24px.png"/>
               <text value=""/>
             </properties>
           </component>

@@ -122,72 +122,49 @@ public class MainWindow extends JFrame {
     }
 
     public void showInstruction() {
-        // TODO
-        /*StringBuilder helpMsg = new StringBuilder();
-        try {
-            String path = this.getClass().getClassLoader().getResource("resorces/helpMessage.html").getPath();
-            File indexFile = new File(path);
-            Scanner helpMessageReader = new Scanner(indexFile);
-            while (helpMessageReader.hasNextLine()) {
-                helpMsg.append(helpMessageReader.nextLine());
-            }
-            helpMessageReader.close();
-            JOptionPane.showMessageDialog(this, helpMsg.toString(), "text", JOptionPane.INFORMATION_MESSAGE);
-        } catch (FileNotFoundException e) {
-            JOptionPane.showMessageDialog(this, "File not found", "Error", JOptionPane.ERROR_MESSAGE);
-        } catch (RuntimeException runtimeException) {
-            JOptionPane.showMessageDialog(this, runtimeException.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }*/
-        String formattedText = "<html>\n" +
-                "<font size=\"5\">\n" +
-                "    <table border=\"2\", cellspacing=\"1\", title=\"Справка\", bgcolor=\"EEEEFF\">\n" +
-                "        <caption><b><font size=\"6\", face=\"cursive, fantasy\">Доступные опции</font></b></caption>\n" +
-                "        <tr>\n" +
-                "            <th>Действие</th>\n" +
-                "            <th>Клавиша</th>\n" +
-                "        </tr>\n" +
-                "   <tr><td>Создать вершину</td><td>ЛКМ двойной клик</td></tr>\n" +
-                "   <tr><td>Открыть контекстное меню</td><td>ПКМ</td></tr>\n" +
-                "   <tr><td>Выделить вершину</td><td>ЛКМ по вершине</td></tr>\n" +
-                "   <tr><td>Переместить вершину</td><td>ЛКМ зажать</td></tr>\n" +
-                "   <tr><td>Провести ребро от выделенной вершины</td><td>удерживать ПКМ</td></tr>\n" +
-                "   <tr><td>Автовыполнение алгоритма</td><td>D</td></tr>\n" +
-                "   <tr><td>Запустить алгоритм</td><td>S</td></tr>\n" +
-                "   <tr><td>Пауза</td><td>P</td></tr>\n" +
-                "   <tr><td>Остановить алгоритм</td><td>A</td></tr>\n" +
-                "   <tr><td>Шаг вперед</td><td>D</td></tr>\n" +
-                "   <tr><td>Шаг назад</td><td>D</td></tr>\n" +
-                "   <tr><td>Удалить выделенные вершины</td><td>Delete</td></tr>\n" +
-                "   </table>\n" +
-                "</html>";
-        JLabel message = new JLabel(formattedText);
-        JOptionPane.showMessageDialog(this, message, "Help", JOptionPane.PLAIN_MESSAGE);
-
+        showHtmlFormattedMessageDialog("/resources/docs/helpMessage.html", "Help", JOptionPane.PLAIN_MESSAGE);
     }
 
     public void showAuthorsInfo() {
-        // TODO
-        String formattedText = "<html>\n" +
-                "<font size=\"5\">\n" +
-                "    <table border=\"2\", cellspacing=\"1\", title=\"Справка\", bgcolor=\"EEEEFF\">\n" +
-                "        <caption><b><font size=\"6\", face=\"cursive, fantasy\">Авторы программы</font></b></caption>\n" +
-                "        <tr>\n" +
-                "            <th>Имя</th>\n" +
-                "            <th>Группа</th>\n" +
-                "            <th>Отвечает за</th>\n" +
-                "        </tr>\n" +
-                "        <tr><td>Сахаров Виктор</td><td>8381</td><td>графический интерфейс</td></tr>\n" +
-                "        <tr><td>Самойлова Анна</td><td>8303</td><td>логика алгоритма</td></tr>\n" +
-                "        <tr><td>Гоголев Евгений</td><td>8381</td><td>логика визуализации</td></tr>\n" +
-                "    </table>\n" +
-                "    <br>\n" +
-                "    <center>\n" +
-                "        СПбГЭТУ \"ЛЭТИ\" <br>\n" +
-                "        2020 год\n" +
-                "    </center>\n" +
-                "</font>";
+        showHtmlFormattedMessageDialog("/resources/docs/authors.html", "Authors", JOptionPane.PLAIN_MESSAGE);
+    }
+
+    /**
+     * @param filename
+     * @return file as String
+     * @apiNote Helper function to read html resources
+     */
+    private String readResourceFileAsString(String filename, String charsetName) {
+        InputStream in = getClass().getResourceAsStream(filename);
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new InputStreamReader(in, charsetName));
+        } catch (UnsupportedEncodingException e) {
+            JOptionPane.showMessageDialog(this, "Incorrect encoding", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        StringBuilder result = new StringBuilder();
+        String line = null;
+        while (true) {
+            try {
+                if ((line = reader.readLine()) == null) break;
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "File not found", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            result.append(line);
+        }
+        return result.toString();
+    }
+
+    /**
+     * @apiNote Shows message dialog, takes message text from a html-encoded file in resources folder
+     * @param filename
+     * @param title
+     * @param messageType
+     */
+    private void showHtmlFormattedMessageDialog(String filename, String title, int messageType) {
+        String formattedText = readResourceFileAsString(filename, "UTF-8");
         JLabel message = new JLabel(formattedText);
-        JOptionPane.showMessageDialog(this, message, "Authors", JOptionPane.PLAIN_MESSAGE);
+        JOptionPane.showMessageDialog(this, message, title, messageType);
     }
 
     //endregion
