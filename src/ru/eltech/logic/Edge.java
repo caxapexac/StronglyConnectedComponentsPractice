@@ -5,17 +5,13 @@ package ru.eltech.logic;
  */
 public class Edge {
     public final Integer id;
-    public Integer source;
-    public Integer target;
-    //for animation
+    private Integer source;
+    private Integer target;
+
     public boolean highlighted = false;
 
-    public Edge(Integer id) {
-        this.id = id;
-    }
-
     public Edge(Integer id, Node source, Node target) {
-        this(id);
+        this.id = id;
         this.source = source.id;
         this.target = target.id;
     }
@@ -24,6 +20,14 @@ public class Edge {
         this.id = other.id;
         this.source = other.source;
         this.target = other.target;
+    }
+
+    public Integer getSource() {
+        return source;
+    }
+
+    public Integer getTarget() {
+        return target;
     }
 
     public void invert() {
@@ -36,10 +40,5 @@ public class Edge {
     @Override
     public Edge clone() {
         return new Edge(this);
-    }
-
-    @Override
-    public String toString() {
-        return ("" + source + ' ' + target);
     }
 }

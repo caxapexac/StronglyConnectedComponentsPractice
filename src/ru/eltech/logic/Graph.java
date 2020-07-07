@@ -16,27 +16,16 @@ public class Graph {
     private final HashMap<Integer, Edge> edgeMap = new HashMap<>();
 
     public Node createNode(int x, int y) {
-        return createNode().setXY(x, y);
-    }
-
-    private Node createNode() {
         while (nodeMap.containsKey(nextNodeId)) nextNodeId++;
-        Node node = new Node(nextNodeId++);
+        Node node = new Node(nextNodeId++, x, y);
         nodeMap.put(node.id, node);
         return node;
     }
 
     @SuppressWarnings("UnusedReturnValue")
     public Edge createEdge(Node from, Node to) {
-        Edge edge = createEdge();
-        edge.source = from.id;
-        edge.target = to.id;
-        return edge;
-    }
-
-    private Edge createEdge() {
         while (nodeMap.containsKey(nextEdgeId)) nextEdgeId++;
-        Edge edge = new Edge(nextEdgeId++);
+        Edge edge = new Edge(nextEdgeId++, from, to);
         edgeMap.put(edge.id, edge);
         return edge;
     }
@@ -63,7 +52,7 @@ public class Graph {
 
     public Node getNode(String nodeName) {
         for (Node node : getNodes()) {
-            if (node.name.equals(nodeName)) return node;
+            if (node.getName().equals(nodeName)) return node;
         }
         return null;
     }
@@ -79,7 +68,7 @@ public class Graph {
 
     public Edge getEdge(Integer source, Integer target, boolean ignoreDirections) {
         for (Edge edge : getEdges()) {
-            if ((edge.source.equals(source) && edge.target.equals(target)) || (!ignoreDirections && edge.source.equals(target) && edge.target.equals(source))) {
+            if ((edge.getSource().equals(source) && edge.getTarget().equals(target)) || (!ignoreDirections && edge.getSource().equals(target) && edge.getTarget().equals(source))) {
                 return edge;
             }
         }
@@ -93,7 +82,7 @@ public class Graph {
     public Collection<Edge> getEdgesFromNodeNoAlloc(Node node, Collection<Edge> result) {
         result.clear();
         for (Edge edge : getEdges()) {
-            if (edge.source.equals(node.id)) result.add(edge);
+            if (edge.getSource().equals(node.id)) result.add(edge);
         }
         return result;
     }
@@ -109,7 +98,7 @@ public class Graph {
     public boolean destroyNode(Node node) {
         Node removed = nodeMap.remove(node.id);
         if (removed == node) {
-            edgeMap.values().removeIf(e -> e.source.equals(node.id) || e.target.equals(node.id));
+            edgeMap.values().removeIf(e -> e.getSource().equals(node.id) || e.getTarget().equals(node.id));
             return true;
         }
         nodeMap.put(removed.id, removed);
@@ -150,7 +139,7 @@ public class Graph {
                 int posX = Integer.parseInt(tokenizer.nextToken());
                 int posY = Integer.parseInt(tokenizer.nextToken());
                 Node node = createNode(posX, posY);
-                node.name = name;
+                node.setName(name);
             }
             int edgesCount = Integer.parseInt(reader.readLine());
             for (int i = 0; i < edgesCount; i++) {
@@ -174,13 +163,13 @@ public class Graph {
         PrintWriter p = new PrintWriter(stream);
         p.println(nodeMap.size());
         for (Node node : nodeMap.values()) {
-            p.println(String.format("%s %d %d", node.name, node.getX(), node.getY()));
+            p.println(String.format("%s %d %d", node.getName(), node.getX(), node.getY()));
         }
         p.println(edgeMap.size());
         for (Edge edge : edgeMap.values()) {
-            Node source = getNode(edge.source);
-            Node target = getNode(edge.target);
-            p.println(String.format("%s %s", source.name, target.name));
+            Node source = getNode(edge.getSource());
+            Node target = getNode(edge.getTarget());
+            p.println(String.format("%s %s", source.getName(), target.getName()));
         }
         p.flush();
     }

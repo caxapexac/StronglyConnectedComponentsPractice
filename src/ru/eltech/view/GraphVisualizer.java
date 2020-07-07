@@ -63,53 +63,62 @@ public class GraphVisualizer extends JPanel {
         g2d.setColor(Color.WHITE);
         g2d.fillRect(0, 0, getWidth(), getHeight());
         for (Edge edge : renderGraph.getEdges()) {
-            decorateEdge(g2d, edge);
             displayEdge(g2d, edge);
         }
         for (Node node : renderGraph.getNodes()) {
-            decorateNode(g2d, node);
             displayNode(g2d, node);
         }
     }
 
     /**
-     * Позволяет настроить стиль дуги в {@link GraphEditor}
+     * Позволяет настроить стиль тела дуги в {@link GraphEditor}
      */
-    protected void decorateEdge(Graphics2D g, Edge edge) {
+    protected void decorateEdgeBody(Graphics2D g, Edge edge) {
         g.setColor(Color.BLACK);
         g.setStroke(DEFAULT_STROKE);
     }
 
+    /**
+     * Позволяет настроить стиль крыльев дуги в {@link GraphEditor}
+     */
+    protected void decorateEdgeArrow(Graphics2D g, Edge edge) {
+        g.setColor(Color.RED);
+        g.setStroke(DEFAULT_STROKE);
+    }
+
     private void displayEdge(Graphics2D g, Edge edge) {
-        Node source = renderGraph.getNode(edge.source);
-        Node target = renderGraph.getNode(edge.target);
-        int dx = target.position.x - source.position.x;
-        int dy = target.position.y - source.position.y;
+        Node source = renderGraph.getNode(edge.getSource());
+        Node target = renderGraph.getNode(edge.getTarget());
+        int dx = target.getPosition().x - source.getPosition().x;
+        int dy = target.getPosition().y - source.getPosition().y;
         double distance = Math.sqrt(dx * dx + dy * dy);
         double vx = dx / distance;
         double vy = dy / distance;
         if (distance > EPSILON) {
-            double startOffset = ARROW_OFFSET + source.radius;
-            double endOffset = ARROW_OFFSET + target.radius;
+            double startOffset = ARROW_OFFSET + source.getRadius();
+            double endOffset = ARROW_OFFSET + target.getRadius();
             if (distance > startOffset + endOffset) {
-                int startX = (int) Math.round(source.position.x + vx * startOffset);
-                int startY = (int) Math.round(source.position.y + vy * startOffset);
-                int endX = (int) Math.round(target.position.x - vx * endOffset);
-                int endY = (int) Math.round(target.position.y - vy * endOffset);
+                int startX = (int) Math.round(source.getPosition().x + vx * startOffset);
+                int startY = (int) Math.round(source.getPosition().y + vy * startOffset);
+                int endX = (int) Math.round(target.getPosition().x - vx * endOffset);
+                int endY = (int) Math.round(target.getPosition().y - vy * endOffset);
                 int leftX = (int) Math.round(endX - vy * ARROW_WIDTH - vx * ARROW_LENGTH);
                 int leftY = (int) Math.round(endY + vx * ARROW_WIDTH - vy * ARROW_LENGTH);
                 int rightX = (int) Math.round(endX + vy * ARROW_WIDTH - vx * ARROW_LENGTH);
                 int rightY = (int) Math.round(endY - vx * ARROW_WIDTH - vy * ARROW_LENGTH);
+                decorateEdgeBody(g, edge);
                 g.drawLine(startX, startY, endX, endY); // Тело дуги
+                decorateEdgeArrow(g, edge);
                 g.drawLine(leftX, leftY, endX, endY); // Левое крыло стрелки
                 g.drawLine(endX, endY, rightX, rightY); // Правое крыло стрелки
             } else {
-                int endX = (int) Math.round((target.position.x + source.position.x) * 0.5d);
-                int endY = (int) Math.round((target.position.y + source.position.y) * 0.5d);
+                int endX = (int) Math.round((target.getPosition().x + source.getPosition().x) * 0.5d);
+                int endY = (int) Math.round((target.getPosition().y + source.getPosition().y) * 0.5d);
                 int leftX = (int) Math.round(endX - vy * ARROW_WIDTH - vx * ARROW_LENGTH);
                 int leftY = (int) Math.round(endY + vx * ARROW_WIDTH - vy * ARROW_LENGTH);
                 int rightX = (int) Math.round(endX + vy * ARROW_WIDTH - vx * ARROW_LENGTH);
                 int rightY = (int) Math.round(endY - vx * ARROW_WIDTH - vy * ARROW_LENGTH);
+                decorateEdgeArrow(g, edge);
                 g.drawLine(leftX, leftY, endX, endY); // Левое крыло стрелки
                 g.drawLine(endX, endY, rightX, rightY); // Правое крыло стрелки
             }
@@ -118,16 +127,33 @@ public class GraphVisualizer extends JPanel {
 
 
     /**
-     * Позволяет настроить стиль ноды в {@link GraphEditor}
+     * Позволяет настроить стиль заливки ноды в {@link GraphEditor}
      */
-    protected void decorateNode(Graphics2D g, Node node) {
+    protected void decorateNodeInner(Graphics2D g, Node node) {
+        g.setColor(Color.GRAY);
+        g.setStroke(DEFAULT_STROKE);
+    }
+
+    /**
+     * Позволяет настроить стиль обводки ноды в {@link GraphEditor}
+     */
+    protected void decorateNodeOuter(Graphics2D g, Node node) {
         g.setColor(Color.BLACK);
         g.setStroke(DEFAULT_STROKE);
     }
 
     private void displayNode(Graphics2D g, Node node) {
-        int radius = node.radius;
-        int diametr = radius * 2;
-        g.drawArc(node.position.x - radius, node.position.y - radius, diametr, diametr, 0, 360);
+        int radius = node.getRadius();
+        int diameter = radius * 2;
+        decorateNodeInner(g, node);
+        g.fillOval(node.getPosition().x - radius, node.getPosition().y - radius, diameter, diameter);
+        decorateNodeOuter(g, node);
+        g.drawOval(node.getPosition().x - radius, node.getPosition().y - radius, diameter, diameter);
+
+        // TODO name decorator
+        FontMetrics fm = g.getFontMetrics();
+        int tx = node.getPosition().x - fm.stringWidth(node.getName()) / 2;
+        int ty = node.getPosition().y - fm.getHeight() / 2 + fm.getAscent();
+        g.drawString(node.getName(), tx, ty);
     }
 }

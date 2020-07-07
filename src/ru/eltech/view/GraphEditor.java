@@ -8,6 +8,7 @@ import java.awt.*;
 
 /**
  * Класс, отвечающий за логику редактирования графа
+ *
  * @author caxap
  */
 public class GraphEditor extends GraphVisualizer {
@@ -109,13 +110,13 @@ public class GraphEditor extends GraphVisualizer {
         int mouseDY = y - draggingLast.y;
 
         if (draggingNode != null) {
-            draggingNode.position.translate(mouseDX, mouseDY);
+            draggingNode.getPosition().translate(mouseDX, mouseDY);
             repaint();
         } else if (draggingEdge != null) {
-            Node fromNode = renderGraph.getNode(draggingEdge.source);
-            Node toNode = renderGraph.getNode(draggingEdge.target);
-            fromNode.position.translate(mouseDX, mouseDY);
-            toNode.position.translate(mouseDX, mouseDY);
+            Node fromNode = renderGraph.getNode(draggingEdge.getSource());
+            Node toNode = renderGraph.getNode(draggingEdge.getTarget());
+            fromNode.getPosition().translate(mouseDX, mouseDY);
+            toNode.getPosition().translate(mouseDX, mouseDY);
             repaint();
         }
 
@@ -222,8 +223,8 @@ public class GraphEditor extends GraphVisualizer {
         Node foundNode = null;
         int foundSqrDist = 0;
         for (Node node : renderGraph.getNodes()) {
-            int sqrDist = (int) Point.distanceSq(node.position.x, node.position.y, x, y);
-            if (sqrDist <= node.radius * node.radius && (foundNode == null || foundSqrDist > sqrDist)) {
+            int sqrDist = (int) Point.distanceSq(node.getPosition().x, node.getPosition().y, x, y);
+            if (sqrDist <= node.getRadius() * node.getRadius() && (foundNode == null || foundSqrDist > sqrDist)) {
                 foundNode = node;
                 foundSqrDist = sqrDist;
             }
@@ -246,8 +247,8 @@ public class GraphEditor extends GraphVisualizer {
         double foundDist = 0;
 
         for (Edge edge : renderGraph.getEdges()) {
-            Node source = renderGraph.getNode(edge.source);
-            Node target = renderGraph.getNode(edge.target);
+            Node source = renderGraph.getNode(edge.getSource());
+            Node target = renderGraph.getNode(edge.getTarget());
             int dx = target.getX() - source.getX();
             int dy = target.getY() - source.getY();
             double dist = Math.sqrt(dx * dx + dy * dy);
@@ -273,28 +274,40 @@ public class GraphEditor extends GraphVisualizer {
         if (connectingSourceNode != null) {
             g2d.setColor(Color.GREEN);
             g2d.setStroke(CONNECTING_STROKE);
-            g2d.drawLine(connectingSourceNode.position.x, connectingSourceNode.position.y, connectingLast.x, connectingLast.y);
+            g2d.drawLine(connectingSourceNode.getPosition().x, connectingSourceNode.getPosition().y, connectingLast.x, connectingLast.y);
         }
     }
 
     @Override
-    protected void decorateNode(Graphics2D g, Node node) {
-        super.decorateNode(g, node);
-        if (draggingNode == node) {
+    protected void decorateEdgeBody(Graphics2D g, Edge edge) {
+        super.decorateEdgeBody(g, edge);
+        if (draggingEdge == edge) {
             g.setStroke(SELECTED_STROKE);
         }
-        if (selectedNode == node) {
+        if (selectedEdge == edge) {
             g.setColor(Color.GREEN);
         }
     }
 
     @Override
-    protected void decorateEdge(Graphics2D g, Edge edge) {
-        super.decorateEdge(g, edge);
-        if (draggingEdge == edge) {
+    protected void decorateEdgeArrow(Graphics2D g, Edge edge) {
+        super.decorateEdgeArrow(g, edge);
+
+    }
+
+    @Override
+    protected void decorateNodeInner(Graphics2D g, Node node) {
+        super.decorateNodeInner(g, node);
+
+    }
+
+    @Override
+    protected void decorateNodeOuter(Graphics2D g, Node node) {
+        super.decorateNodeOuter(g, node);
+        if (draggingNode == node) {
             g.setStroke(SELECTED_STROKE);
         }
-        if (selectedEdge == edge) {
+        if (selectedNode == node) {
             g.setColor(Color.GREEN);
         }
     }
@@ -359,5 +372,4 @@ public class GraphEditor extends GraphVisualizer {
 
     //endregion
 }
-
 

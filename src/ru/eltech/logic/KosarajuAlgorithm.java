@@ -73,7 +73,7 @@ public class KosarajuAlgorithm implements Algorithm {
             currentEdge.highlighted = true;
             frames.add(graph);
 
-            nextNode = graph.getNode(currentEdge.target);
+            nextNode = graph.getNode(currentEdge.getTarget());
             if (!nextNode.visited) {
                 timeOut(nextNode, graph);
             }
@@ -106,7 +106,7 @@ public class KosarajuAlgorithm implements Algorithm {
         for (Edge currentEdge : edgeList) {
             currentEdge.highlighted = true;
             frames.add(graph);
-            Node nextNode = graph.getNode(currentEdge.target);
+            Node nextNode = graph.getNode(currentEdge.getTarget());
             if (nextNode.strongComponentId == -1) {
                 findComponent(componentId, nextNode, graph);
             }

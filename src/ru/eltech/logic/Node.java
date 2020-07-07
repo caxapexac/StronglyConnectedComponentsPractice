@@ -7,25 +7,46 @@ import java.awt.*;
  */
 public class Node {
     public final Integer id;
-    public String name;
-    public int radius = 10;
-    public Point position = new Point(0, 0);
-    //для алгоритма
-    public boolean visited = false;
-    //для визуализации
-    public boolean highlighted = false;
-    public int strongComponentId = -1;//по умолчанию не в компоненте
+    private String name;
+    private int radius;
+    private Point position;
 
-    public Node(Integer id) {
+    public boolean visited = false;
+    public boolean highlighted = false;
+    public int strongComponentId = -1;
+
+    public Node(Integer id, int x, int y) {
         this.id = id;
-        this.name = id.toString();
+        this.setName(id.toString());
+        this.setRadius(32);
+        this.setPosition(new Point(x, y));
     }
 
     private Node(Node other) {
         this.id = other.id;
-        this.name = other.name;
-        this.radius = other.radius;
-        this.position = (Point) other.position.clone();
+        this.setName(other.getName());
+        this.setRadius(other.getRadius());
+        this.setPosition((Point) other.position.clone());
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getRadius() {
+        return radius;
+    }
+
+    public void setRadius(int radius) {
+        this.radius = radius;
+    }
+
+    public Point getPosition() {
+        return position;
     }
 
     public int getX() {
@@ -36,9 +57,16 @@ public class Node {
         return position.y;
     }
 
-    public Node setXY(int x, int y) {
-        this.position.move(x, y);
-        return this;
+    public void setPosition(Point position) {
+        this.position = position;
+    }
+
+    public void setX(int x) {
+        this.position.x = x;
+    }
+
+    public void setY(int y) {
+        this.position.y = y;
     }
 
     @SuppressWarnings("MethodDoesntCallSuperMethod")
@@ -47,8 +75,5 @@ public class Node {
         return new Node(this);
     }
 
-    @Override
-    public String toString() {
-        return (name + ' ' + position.x + ' ' + position.y);
-    }
+
 }
