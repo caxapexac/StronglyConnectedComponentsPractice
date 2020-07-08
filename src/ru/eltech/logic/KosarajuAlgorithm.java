@@ -30,7 +30,7 @@ public class KosarajuAlgorithm implements Algorithm {
     public FrameList process(Graph context) {
         timeOutList = new ArrayList<>();
         frames = new FrameList();
-
+        frames.add(context);
 
         Collection<Node> nodes = context.getNodes();
         for (Node node : nodes) {
