@@ -6,7 +6,6 @@ import ru.eltech.logic.Node;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
 
 /**
  * Класс, отвечающий за логику отображения графа
@@ -37,26 +36,23 @@ public class GraphVisualizer extends JPanel {
      */
     protected static final Font font = new Font(Font.DIALOG, Font.BOLD, 24);
 
-    protected Graph renderGraph = new Graph();
+    protected Graph graph = new Graph();
 
     /**
-     * Заменяет текущий граф на содержимое переданного графа
+     * Заменяет текущий граф на копию переданного графа
      *
-     * @param renderGraph граф, который требуется визуализировать
+     * @param graph граф, который требуется визуализировать
      */
-    public void setRenderGraph(Graph renderGraph) {
-        this.renderGraph.set(renderGraph);
+    public void setGraphCopy(Graph graph) {
+        this.graph = new Graph(graph);
         repaint();
     }
 
     /**
-     * Заменяет содержимое переданного графа на текущий граф
-     *
-     * @param store контейнер для записи
-     * @return ссылка на store
+     * @return копия текущего графа
      */
-    public Graph getGraph(Graph store) {
-        return store.set(this.renderGraph);
+    public Graph getGraphCopy() {
+        return new Graph(graph);
     }
 
     /**
@@ -70,10 +66,10 @@ public class GraphVisualizer extends JPanel {
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2d.setColor(Color.WHITE);
         g2d.fillRect(0, 0, getWidth(), getHeight());
-        for (Edge edge : renderGraph.getEdges()) {
+        for (Edge edge : graph.getEdges()) {
             displayEdge(g2d, edge);
         }
-        for (Node node : renderGraph.getNodes()) {
+        for (Node node : graph.getNodes()) {
             displayNode(g2d, node);
         }
     }
@@ -90,13 +86,13 @@ public class GraphVisualizer extends JPanel {
      * Позволяет настроить стиль крыльев дуги в {@link GraphEditor}
      */
     protected void decorateEdgeArrow(Graphics2D g, Edge edge) {
-        g.setColor(Color.RED);
+        g.setColor(Color.BLACK);
         g.setStroke(DEFAULT_STROKE);
     }
 
     private void displayEdge(Graphics2D g, Edge edge) {
-        Node source = renderGraph.getNode(edge.getSource());
-        Node target = renderGraph.getNode(edge.getTarget());
+        Node source = graph.getNode(edge.getSource());
+        Node target = graph.getNode(edge.getTarget());
         int dx = target.getPosition().x - source.getPosition().x;
         int dy = target.getPosition().y - source.getPosition().y;
         double distance = Math.sqrt(dx * dx + dy * dy);

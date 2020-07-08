@@ -5,7 +5,7 @@ import java.util.ArrayList;
 /**
  * TODO
  */
-public class FrameList {
+public final class FrameList {
     private ArrayList<Graph> frames;
 
     public FrameList() {
@@ -17,7 +17,7 @@ public class FrameList {
     }
 
     public void add(Graph frame) {
-        frames.add(frame);
+        frames.add(new Graph(frame));
     }
 
     public Graph get(int index) {

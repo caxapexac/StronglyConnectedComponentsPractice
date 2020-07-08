@@ -6,7 +6,7 @@ import java.awt.*;
 /**
  * Контекстное меню при клике ПКМ*2 на пустую область внутри {@link GraphEditor}
  */
-public class GraphPopupMenuEmpty extends JPopupMenu {
+public final class GraphPopupMenuEmpty extends JPopupMenu {
     private int x;
     private int y;
 

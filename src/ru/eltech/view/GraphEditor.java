@@ -5,13 +5,14 @@ import ru.eltech.logic.Graph;
 import ru.eltech.logic.Node;
 
 import java.awt.*;
+import java.util.Random;
 
 /**
  * Класс, отвечающий за логику редактирования графа
  *
  * @author caxap
  */
-public class GraphEditor extends GraphVisualizer {
+public final class GraphEditor extends GraphVisualizer {
     /**
      * Ширина коллайдера дуги
      */
@@ -25,6 +26,7 @@ public class GraphEditor extends GraphVisualizer {
      */
     private static final BasicStroke CONNECTING_STROKE = new BasicStroke(6, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 10, new float[]{5, 10}, 0);
 
+    public boolean isReadOnly = false;
     private final Point draggingLast = new Point();
     private final Point connectingLast = new Point();
     private Node draggingNode;
@@ -40,13 +42,13 @@ public class GraphEditor extends GraphVisualizer {
     }
 
     @Override
-    public void setRenderGraph(Graph renderGraph) {
+    public void setGraphCopy(Graph renderGraph) {
         draggingNode = null;
         selectedNode = null;
         draggingEdge = null;
         selectedEdge = null;
         connectingSourceNode = null;
-        super.setRenderGraph(renderGraph);
+        super.setGraphCopy(renderGraph);
     }
 
     /**
@@ -113,8 +115,8 @@ public class GraphEditor extends GraphVisualizer {
             draggingNode.getPosition().translate(mouseDX, mouseDY);
             repaint();
         } else if (draggingEdge != null) {
-            Node fromNode = renderGraph.getNode(draggingEdge.getSource());
-            Node toNode = renderGraph.getNode(draggingEdge.getTarget());
+            Node fromNode = graph.getNode(draggingEdge.getSource());
+            Node toNode = graph.getNode(draggingEdge.getTarget());
             fromNode.getPosition().translate(mouseDX, mouseDY);
             toNode.getPosition().translate(mouseDX, mouseDY);
             repaint();
@@ -162,14 +164,14 @@ public class GraphEditor extends GraphVisualizer {
         Node node = innerFindNode(x, y);
         if (node != connectingSourceNode) {
             if (node != null) {
-                Edge currentEdge = renderGraph.getEdge(connectingSourceNode, node, true);
+                Edge currentEdge = graph.getEdge(connectingSourceNode, node, true);
                 if (currentEdge != null) {
-                    if (willDestroyClone) renderGraph.destroyEdge(currentEdge);
+                    if (willDestroyClone) graph.destroyEdge(currentEdge);
                 } else
-                    renderGraph.createEdge(connectingSourceNode, node);
+                    graph.createEdge(connectingSourceNode, node);
             } else if (willCreateNode) {
-                Node newNode = renderGraph.createNode(x, y);
-                renderGraph.createEdge(connectingSourceNode, newNode);
+                Node newNode = graph.createNode(x, y);
+                graph.createEdge(connectingSourceNode, newNode);
             }
         }
         connectingSourceNode = null;
@@ -180,7 +182,7 @@ public class GraphEditor extends GraphVisualizer {
      * Создаёт ноду на координатах x,y
      */
     public void createNode(int x, int y) {
-        renderGraph.createNode(x, y);
+        graph.createNode(x, y);
         repaint();
     }
 
@@ -193,17 +195,17 @@ public class GraphEditor extends GraphVisualizer {
 
     private boolean innerDestroySelectedNode() {
         if (selectedNode == null) return false;
-        renderGraph.destroyNode(selectedNode);
+        graph.destroyNode(selectedNode);
         if (draggingNode == selectedNode) draggingNode = null;
         if (connectingSourceNode == selectedNode) connectingSourceNode = null;
-        if (selectedEdge != null && !renderGraph.containsEdge(selectedEdge)) selectedEdge = null;
+        if (selectedEdge != null && !graph.containsEdge(selectedEdge)) selectedEdge = null;
         selectedNode = null;
         return true;
     }
 
     private boolean innerDestroySelectedEdge() {
         if (selectedEdge == null) return false;
-        renderGraph.destroyEdge(selectedEdge);
+        graph.destroyEdge(selectedEdge);
         if (draggingEdge == selectedEdge) draggingEdge = null;
         selectedEdge = null;
         return true;
@@ -222,7 +224,7 @@ public class GraphEditor extends GraphVisualizer {
     private Node innerFindNode(int x, int y) {
         Node foundNode = null;
         int foundSqrDist = 0;
-        for (Node node : renderGraph.getNodes()) {
+        for (Node node : graph.getNodes()) {
             int sqrDist = (int) Point.distanceSq(node.getPosition().x, node.getPosition().y, x, y);
             if (sqrDist <= node.getRadius() * node.getRadius() && (foundNode == null || foundSqrDist > sqrDist)) {
                 foundNode = node;
@@ -246,9 +248,9 @@ public class GraphEditor extends GraphVisualizer {
         Edge foundEdge = null;
         double foundDist = 0;
 
-        for (Edge edge : renderGraph.getEdges()) {
-            Node source = renderGraph.getNode(edge.getSource());
-            Node target = renderGraph.getNode(edge.getTarget());
+        for (Edge edge : graph.getEdges()) {
+            Node source = graph.getNode(edge.getSource());
+            Node target = graph.getNode(edge.getTarget());
             int dx = target.getX() - source.getX();
             int dy = target.getY() - source.getY();
             double dist = Math.sqrt(dx * dx + dy * dy);
@@ -287,18 +289,34 @@ public class GraphEditor extends GraphVisualizer {
         if (selectedEdge == edge) {
             g.setColor(Color.GREEN);
         }
+        if (isReadOnly) {
+            if (edge.highlighted) {
+                g.setColor(Color.ORANGE);
+            }
+        }
     }
 
     @Override
     protected void decorateEdgeArrow(Graphics2D g, Edge edge) {
         super.decorateEdgeArrow(g, edge);
-
+        if (isReadOnly) {
+            if (edge.highlighted) {
+                g.setColor(Color.ORANGE);
+            }
+        }
     }
 
     @Override
     protected void decorateNodeInner(Graphics2D g, Node node) {
         super.decorateNodeInner(g, node);
-
+        if (isReadOnly) {
+            if (node.visited) {
+                g.setColor(Color.LIGHT_GRAY);
+            }
+            if (node.strongComponentId != -1) {
+                g.setColor(NodeColors.colors[node.strongComponentId % NodeColors.colors.length]);
+            }
+        }
     }
 
     @Override
@@ -309,6 +327,11 @@ public class GraphEditor extends GraphVisualizer {
         }
         if (selectedNode == node) {
             g.setColor(Color.GREEN);
+        }
+        if (isReadOnly) {
+            if (node.highlighted) {
+                g.setColor(Color.ORANGE);
+            }
         }
     }
 

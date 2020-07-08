@@ -10,7 +10,7 @@ import java.awt.event.KeyEvent;
  * Обёртка над панелью меню в {@link MainWindow}
  */
 @SuppressWarnings("FieldCanBeLocal")
-public class MainMenuBar extends JMenuBar implements ActionListener {
+public final class MainMenuBar extends JMenuBar implements ActionListener {
     private final MainWindow parent;
 
     private final JMenu fileMenu = new JMenu("File");
@@ -26,7 +26,7 @@ public class MainMenuBar extends JMenuBar implements ActionListener {
     // TODO
 
     private final JMenu viewMenu = new JMenu("View");
-    private final JMenuItem startMenuItem = new JMenuItem("edgesMenuItem...");
+    private final JMenuItem startMenuItem = new JMenuItem("Запустить алгоритм");
     // TODO
 
     private final JMenu helpMenu = new JMenu("Help");
@@ -89,7 +89,7 @@ public class MainMenuBar extends JMenuBar implements ActionListener {
         } else if (eSource == edgesMenuItem) {
             parent.showEdgesList();
         } else if (eSource == startMenuItem) {
-            parent.startAlgorithm();
+            parent.startVisualizing();
         } else if (eSource == appMenuItem) {
             parent.showInstruction();
         } else if (eSource == authorMenuItem) {

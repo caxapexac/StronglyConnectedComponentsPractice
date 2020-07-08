@@ -7,7 +7,7 @@ import java.awt.event.MouseListener;
 /**
  * Логика нажатия клавиш мыши в {@link GraphEditor}
  */
-public class GraphEditorMouseListener implements MouseListener {
+public final class GraphEditorMouseListener implements MouseListener {
     @Override
     public void mouseClicked(MouseEvent e) {
         GraphEditor graphEditor = (GraphEditor) e.getSource();
@@ -15,12 +15,13 @@ public class GraphEditorMouseListener implements MouseListener {
             if (e.getButton() == MouseEvent.BUTTON1) {
                 if (graphEditor.hasSelected()) graphEditor.destroySelected();
                 else graphEditor.createNode(e.getX(), e.getY());
-            } else if (e.getButton() == MouseEvent.BUTTON3) {
-                JPopupMenu menu = createPopupMenu(graphEditor, e.getX(), e.getY());
-                menu.show(graphEditor, e.getX(), e.getY());
             }
-            e.consume();
         }
+        if (e.getButton() == MouseEvent.BUTTON3) {
+            JPopupMenu menu = createPopupMenu(graphEditor, e.getX(), e.getY());
+            menu.show(graphEditor, e.getX(), e.getY());
+        }
+        e.consume();
     }
 
     private JPopupMenu createPopupMenu(GraphEditor graph, int x, int y) {

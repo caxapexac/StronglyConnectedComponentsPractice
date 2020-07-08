@@ -5,7 +5,7 @@ import java.awt.*;
 /**
  * @author Samoilova Anna
  */
-public class Node {
+public final class Node {
     public final Integer id;
     private String name;
     private int radius;
@@ -27,6 +27,9 @@ public class Node {
         this.setName(other.getName());
         this.setRadius(other.getRadius());
         this.setPosition((Point) other.position.clone());
+        this.visited = other.visited;
+        this.highlighted = other.highlighted;
+        this.strongComponentId = other.strongComponentId;
     }
 
     public String getName() {

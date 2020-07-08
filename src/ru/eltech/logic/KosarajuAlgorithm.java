@@ -1,16 +1,16 @@
 package ru.eltech.logic;
 
-import ru.eltech.logic.Algorithm;
-import ru.eltech.logic.FrameList;
-import ru.eltech.logic.Graph;
+import ru.eltech.view.MainWindow;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
-public class KosarajuAlgorithm implements Algorithm {
+public final class KosarajuAlgorithm implements Algorithm {
 
     private ArrayList<Node> timeOutList;
     private FrameList frames;
+    //private int timer = 0;
 
     public KosarajuAlgorithm() {
         //вершины по времени выхода в порядке возрастания
@@ -28,6 +28,9 @@ public class KosarajuAlgorithm implements Algorithm {
      */
     @Override
     public FrameList process(Graph context) {
+        timeOutList = new ArrayList<>();
+        frames = new FrameList();
+        frames.add(context);
 
         Collection<Node> nodes = context.getNodes();
         for (Node node : nodes) {
@@ -35,12 +38,18 @@ public class KosarajuAlgorithm implements Algorithm {
                 timeOut(node, context);
             }
         }
+        Collections.reverse(timeOutList);
+
+        //just in case
+        if (timeOutList.size() != context.getNodesCount()) {
+            MainWindow.log.severe("timeoutsize " + timeOutList.size() + " nodes count " + context.getNodesCount());
+        }
 
         clearVisitedNodes(context);
         clearHighlightedNodes(context);
         clearHighlightedEdges(context);
 
-        reverseGraph(context);
+        reverseGraph(context, true);
 
         clearHighlightedEdges(context);
 
@@ -52,16 +61,32 @@ public class KosarajuAlgorithm implements Algorithm {
             }
         }
 
+        //сбрасываем все выделения в конце алгоритма
         clearVisitedNodes(context);
         clearHighlightedNodes(context);
         clearHighlightedEdges(context);
         frames.add(context);
 
+        //возвращаем граф к исходному состоянию за три кадра
+        highlightAllEdges(context);
+        frames.add(context);
+        reverseGraph(context, false);
+        frames.add(context);
+        clearHighlightedEdges(context);
+        frames.add(context);
+
+        MainWindow.log.info("Алгоритм закончен. " + frames.count() + " итераций");
         return frames;
     }
 
+    /**
+     * @param startNode
+     * @param graph
+     * @implNote Первый обход dfs
+     */
     private void timeOut(Node startNode, Graph graph) {
         startNode.visited = true;
+        //timer++;
 
         startNode.highlighted = true;
         frames.add(graph);//for animation
@@ -76,24 +101,38 @@ public class KosarajuAlgorithm implements Algorithm {
             nextNode = graph.getNode(currentEdge.getTarget());
             if (!nextNode.visited) {
                 timeOut(nextNode, graph);
+                //MainWindow.log.info("added " + Integer.toString(timer));
             }
         }
-        timeOutList.add(nextNode);
+        timeOutList.add(startNode);
+        //timer++;
     }
 
     /**
      * @param graph
      * @implNote Разворачивает ребра графа
      */
-    private void reverseGraph(Graph graph) {
-        Node from, to;
+    private void reverseGraph(Graph graph, boolean animate) {
         for (Edge current : graph.getEdges()) {
+            if (animate) {
+                current.highlighted = true;
+                frames.add(graph);//for animation
+            }
+
             current.invert();
-            current.highlighted = true;
-            frames.add(graph);//for animation
+
+            if (animate) {
+                frames.add(graph);
+            }
         }
     }
 
+    /**
+     * @param componentId
+     * @param node
+     * @param graph
+     * @implNote Второй обход dfs
+     */
     private void findComponent(int componentId, Node node, Graph graph) {
 
         node.strongComponentId = componentId;
@@ -104,11 +143,16 @@ public class KosarajuAlgorithm implements Algorithm {
 
         Collection<Edge> edgeList = graph.getEdgesFromNode(node);
         for (Edge currentEdge : edgeList) {
+
             currentEdge.highlighted = true;
             frames.add(graph);
+
             Node nextNode = graph.getNode(currentEdge.getTarget());
             if (nextNode.strongComponentId == -1) {
                 findComponent(componentId, nextNode, graph);
+            } else if (nextNode.strongComponentId != node.strongComponentId) {
+                currentEdge.highlighted = false;
+                frames.add(graph);
             }
         }
     }
@@ -128,6 +172,13 @@ public class KosarajuAlgorithm implements Algorithm {
     private void clearHighlightedEdges(Graph graph) {
         for (Edge edge : graph.getEdges()) {
             edge.highlighted = false;
+        }
+    }
+
+    private void highlightAllEdges(Graph graph) {
+        for (Edge edge :
+                graph.getEdges()) {
+            edge.highlighted = true;
         }
     }
 }
