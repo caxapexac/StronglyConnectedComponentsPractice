@@ -245,7 +245,7 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
      * @apiNote Helper function to read html resources
      */
     private String readResourceFileAsString(String filename, String charsetName) {
-        try (InputStreamReader is = new InputStreamReader(getClass().getResourceAsStream(filename))) {
+        try (InputStreamReader is = new InputStreamReader(getClass().getResourceAsStream(filename), charsetName)) {
             return new BufferedReader(is).lines().collect(Collectors.joining("\n"));
         } catch (UnsupportedEncodingException e) {
             JOptionPane.showMessageDialog(this, "Incorrect encoding", "Error", JOptionPane.ERROR_MESSAGE);
