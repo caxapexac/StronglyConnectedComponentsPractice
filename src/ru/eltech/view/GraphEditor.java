@@ -289,6 +289,9 @@ public class GraphEditor extends GraphVisualizer {
         if (selectedEdge == edge) {
             g.setColor(Color.GREEN);
         }
+        if (edge.highlighted) {
+            g.setColor(Color.ORANGE);
+        }
     }
 
     @Override
