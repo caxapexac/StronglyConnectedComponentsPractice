@@ -66,12 +66,19 @@ public class GraphPlayer {
             setState(State.Stoped);
             return;
         }
-        Graph graph = frameList.get(currentFrame++);
+        Graph graph = frameList.get(++currentFrame);
         listener.frameChanged(graph);
     }
 
     public void stepBackward() {
-        // TODO
+        if(frameList == null || state == State.Empty || state == State.Stoped) return;
+        if(currentFrame <= 0){
+            MainWindow.log.warning("Нет предыдущего фрейма");
+            setState(State.Stoped);
+            return;
+        }
+        Graph graph = frameList.get(--currentFrame);
+        listener.frameChanged(graph);
     }
 
 
