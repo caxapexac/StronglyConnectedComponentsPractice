@@ -5,7 +5,7 @@ import javax.swing.*;
 /**
  * Контекстное меню при клике ПКМ*2 на {@link ru.eltech.logic.Node}
  */
-public class GraphPopupMenuNode extends JPopupMenu {
+public final class GraphPopupMenuNode extends JPopupMenu {
     public GraphPopupMenuNode(GraphEditor graphEditor, Integer id) {
         JMenuItem removeNodeMenuItem = new JMenuItem("Удалить узел");
         removeNodeMenuItem.addActionListener((action) -> graphEditor.removeNode(id));

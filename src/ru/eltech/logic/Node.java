@@ -5,7 +5,7 @@ import java.awt.*;
 /**
  * @author Samoilova Anna
  */
-public class Node {
+public final class Node {
     public final Integer id;
     private String name;
     private int radius;

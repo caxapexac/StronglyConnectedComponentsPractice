@@ -3,7 +3,7 @@ package ru.eltech.view;
 import ru.eltech.logic.Graph;
 import ru.eltech.logic.GraphPlayer;
 
-public class GraphPlayerListener {
+public final class GraphPlayerListener {
     private MainWindow parent;
 
     public GraphPlayerListener(MainWindow parent) {
@@ -11,7 +11,7 @@ public class GraphPlayerListener {
     }
 
     public void frameChanged(Graph graph) {
-        MainWindow.log.info("frameChanged");
+        //MainWindow.log.info("frameChanged");
         parent.stepVisualizing(graph);
     }
 
@@ -27,6 +27,6 @@ public class GraphPlayerListener {
                 parent.stopVisualizing();
                 break;
         }
-        MainWindow.log.info("stateChange");
+        //MainWindow.log.info("stateChange");
     }
 }

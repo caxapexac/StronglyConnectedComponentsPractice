@@ -86,7 +86,7 @@ public class GraphVisualizer extends JPanel {
      * Позволяет настроить стиль крыльев дуги в {@link GraphEditor}
      */
     protected void decorateEdgeArrow(Graphics2D g, Edge edge) {
-        g.setColor(Color.RED);
+        g.setColor(Color.BLACK);
         g.setStroke(DEFAULT_STROKE);
     }
 

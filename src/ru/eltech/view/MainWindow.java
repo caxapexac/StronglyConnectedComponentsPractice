@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 
-public class MainWindow extends JFrame implements ActionListener, ChangeListener {
+public final class MainWindow extends JFrame implements ActionListener, ChangeListener {
     public static Logger log = Logger.getLogger(MainWindow.class.getName());
 
     private JPanel content;
@@ -179,7 +179,7 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
     }
 
     public void stepVisualizing(Graph graph) {
-        log.info("stepVisualizing");
+        //log.info("stepVisualizing");
         if (!graphEditor.isReadOnly) startVisualizing();
         graphEditor.setGraphCopy(graph);
     }
@@ -201,7 +201,7 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
     public void actionPerformed(ActionEvent e) {
         Object eSource = e.getSource();
         if (eSource == toolBarAutoButton) {
-            // TODO
+            startVisualizing();
         } else if (eSource == toolBarStartButton) {
             if (graphPlayer.getState() == GraphPlayer.State.Empty) startVisualizing();
             graphPlayer.setState(GraphPlayer.State.Started);
@@ -221,6 +221,7 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
         JSlider slider = (JSlider) e.getSource();
         if (slider == toolBarSpeedSlider) {
             int speed = slider.getValue();
+            graphPlayer.setDelay(speed);
             log.info("speed changed to " + speed);
         }
     }
@@ -308,12 +309,15 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
         toolBarStopButton.setText("");
         panel1.add(toolBarStopButton);
         toolBarSpeedSlider = new JSlider();
+        toolBarSpeedSlider.setMaximum(5000);
         toolBarSpeedSlider.setMaximumSize(new Dimension(300, 31));
+        toolBarSpeedSlider.setMinimum(1);
         toolBarSpeedSlider.setPaintLabels(false);
         toolBarSpeedSlider.setPaintTicks(true);
+        toolBarSpeedSlider.setValue(1000);
         panel1.add(toolBarSpeedSlider);
         final JLabel label1 = new JLabel();
-        label1.setText("Speed");
+        label1.setText("Delay");
         panel1.add(label1);
         final JToolBar.Separator toolBar$Separator1 = new JToolBar.Separator();
         panel1.add(toolBar$Separator1);

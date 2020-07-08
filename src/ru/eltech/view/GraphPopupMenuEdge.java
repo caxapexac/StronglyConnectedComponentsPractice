@@ -5,7 +5,7 @@ import javax.swing.*;
 /**
  * Контекстное меню при клике ПКМ*2 на {@link ru.eltech.logic.Edge}
  */
-public class GraphPopupMenuEdge extends JPopupMenu {
+public final class GraphPopupMenuEdge extends JPopupMenu {
     public GraphPopupMenuEdge(GraphEditor graphEditor, Integer id) {
         JMenuItem removeEdgeMenuItem = new JMenuItem("Удалить дугу");
         removeEdgeMenuItem.addActionListener((action) -> graphEditor.destroyEdge(id));

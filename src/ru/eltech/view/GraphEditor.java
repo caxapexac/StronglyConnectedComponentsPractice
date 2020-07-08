@@ -12,7 +12,7 @@ import java.util.Random;
  *
  * @author caxap
  */
-public class GraphEditor extends GraphVisualizer {
+public final class GraphEditor extends GraphVisualizer {
     /**
      * Ширина коллайдера дуги
      */
@@ -289,27 +289,33 @@ public class GraphEditor extends GraphVisualizer {
         if (selectedEdge == edge) {
             g.setColor(Color.GREEN);
         }
-        if (edge.highlighted) {
-            g.setColor(Color.ORANGE);
+        if (isReadOnly) {
+            if (edge.highlighted) {
+                g.setColor(Color.ORANGE);
+            }
         }
     }
 
     @Override
     protected void decorateEdgeArrow(Graphics2D g, Edge edge) {
         super.decorateEdgeArrow(g, edge);
-        if (edge.highlighted) {
-            g.setColor(Color.ORANGE);
+        if (isReadOnly) {
+            if (edge.highlighted) {
+                g.setColor(Color.ORANGE);
+            }
         }
     }
 
     @Override
     protected void decorateNodeInner(Graphics2D g, Node node) {
         super.decorateNodeInner(g, node);
-        if (node.visited) {
-            g.setColor(Color.LIGHT_GRAY);
-        }
-        if (node.strongComponentId != -1) {
-            g.setColor(NodeColors.colors[node.strongComponentId % NodeColors.colors.length]);
+        if (isReadOnly) {
+            if (node.visited) {
+                g.setColor(Color.LIGHT_GRAY);
+            }
+            if (node.strongComponentId != -1) {
+                g.setColor(NodeColors.colors[node.strongComponentId % NodeColors.colors.length]);
+            }
         }
     }
 
@@ -322,8 +328,10 @@ public class GraphEditor extends GraphVisualizer {
         if (selectedNode == node) {
             g.setColor(Color.GREEN);
         }
-        if (node.highlighted) {
-            g.setColor(Color.ORANGE);
+        if (isReadOnly) {
+            if (node.highlighted) {
+                g.setColor(Color.ORANGE);
+            }
         }
     }
 

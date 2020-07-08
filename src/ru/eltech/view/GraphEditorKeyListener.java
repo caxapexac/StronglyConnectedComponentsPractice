@@ -7,7 +7,7 @@ import java.awt.event.KeyListener;
 /**
  * Логика нажатия клавиш клавиатуры в {@link GraphEditor}
  */
-public class GraphEditorKeyListener implements KeyListener {
+public final class GraphEditorKeyListener implements KeyListener {
     @Override
     public void keyTyped(KeyEvent e) {
         //

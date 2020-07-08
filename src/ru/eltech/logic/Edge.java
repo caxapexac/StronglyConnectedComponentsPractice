@@ -3,7 +3,7 @@ package ru.eltech.logic;
 /**
  * @author Samoilova Anna
  */
-public class Edge {
+public final class Edge {
     public final Integer id;
     private Integer source;
     private Integer target;

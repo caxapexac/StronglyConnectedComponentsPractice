@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
-public class LoggerTextAreaHandler extends Handler {
+public final class LoggerTextAreaHandler extends Handler {
     private final JTextPane textPane;
 
     public LoggerTextAreaHandler(JTextPane textPane) {

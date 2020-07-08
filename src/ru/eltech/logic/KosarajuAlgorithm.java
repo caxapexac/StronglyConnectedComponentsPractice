@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-public class KosarajuAlgorithm implements Algorithm {
+public final class KosarajuAlgorithm implements Algorithm {
 
     private ArrayList<Node> timeOutList;
     private FrameList frames;

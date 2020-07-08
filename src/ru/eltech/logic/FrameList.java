@@ -5,7 +5,7 @@ import java.util.ArrayList;
 /**
  * TODO
  */
-public class FrameList {
+public final class FrameList {
     private ArrayList<Graph> frames;
 
     public FrameList() {

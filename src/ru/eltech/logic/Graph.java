@@ -9,7 +9,7 @@ import java.util.StringTokenizer;
 /**
  * @author Samoilova Anna
  */
-public class Graph {
+public final class Graph {
     private int nextNodeId;
     private int nextEdgeId;
     private final HashMap<Integer, Node> nodeMap;

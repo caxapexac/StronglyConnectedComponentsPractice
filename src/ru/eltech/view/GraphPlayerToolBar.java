@@ -5,7 +5,7 @@ import javax.swing.*;
 /**
  * Панель управления анимацией, в отдельном классе, так как IntelliJ не умеет нормально работать с нажатиями на кнопки
  */
-public class GraphPlayerToolBar extends JToolBar {
+public final class GraphPlayerToolBar extends JToolBar {
     public GraphPlayerToolBar() {
 
     }

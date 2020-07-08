@@ -10,7 +10,7 @@ import java.awt.event.KeyEvent;
  * Обёртка над панелью меню в {@link MainWindow}
  */
 @SuppressWarnings("FieldCanBeLocal")
-public class MainMenuBar extends JMenuBar implements ActionListener {
+public final class MainMenuBar extends JMenuBar implements ActionListener {
     private final MainWindow parent;
 
     private final JMenu fileMenu = new JMenu("File");

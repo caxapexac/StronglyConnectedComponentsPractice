@@ -70,15 +70,18 @@
               <component id="7591c" class="javax.swing.JSlider" binding="toolBarSpeedSlider">
                 <constraints/>
                 <properties>
+                  <maximum value="5000"/>
                   <maximumSize width="300" height="31"/>
+                  <minimum value="1"/>
                   <paintLabels value="false"/>
                   <paintTicks value="true"/>
+                  <value value="1000"/>
                 </properties>
               </component>
               <component id="1aef3" class="javax.swing.JLabel">
                 <constraints/>
                 <properties>
-                  <text value="Speed"/>
+                  <text value="Delay"/>
                 </properties>
               </component>
               <component id="6e29" class="javax.swing.JToolBar$Separator">

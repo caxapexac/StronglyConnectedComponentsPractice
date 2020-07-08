@@ -7,7 +7,7 @@ import java.awt.event.MouseListener;
 /**
  * Логика нажатия клавиш мыши в {@link GraphEditor}
  */
-public class GraphEditorMouseListener implements MouseListener {
+public final class GraphEditorMouseListener implements MouseListener {
     @Override
     public void mouseClicked(MouseEvent e) {
         GraphEditor graphEditor = (GraphEditor) e.getSource();
