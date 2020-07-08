@@ -17,7 +17,7 @@ public class FrameList {
     }
 
     public void add(Graph frame) {
-        frames.add(frame);
+        frames.add(new Graph(frame));
     }
 
     public Graph get(int index) {

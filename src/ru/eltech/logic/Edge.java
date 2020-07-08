@@ -20,6 +20,7 @@ public class Edge {
         this.id = other.id;
         this.source = other.source;
         this.target = other.target;
+        this.highlighted = other.highlighted;
     }
 
     public Integer getSource() {

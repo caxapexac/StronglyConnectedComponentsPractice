@@ -5,6 +5,7 @@ import ru.eltech.logic.Graph;
 import ru.eltech.logic.Node;
 
 import java.awt.*;
+import java.util.Random;
 
 /**
  * Класс, отвечающий за логику редактирования графа
@@ -25,6 +26,7 @@ public class GraphEditor extends GraphVisualizer {
      */
     private static final BasicStroke CONNECTING_STROKE = new BasicStroke(6, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 10, new float[]{5, 10}, 0);
 
+    public boolean isReadOnly = false;
     private final Point draggingLast = new Point();
     private final Point connectingLast = new Point();
     private Node draggingNode;
@@ -292,13 +294,29 @@ public class GraphEditor extends GraphVisualizer {
     @Override
     protected void decorateEdgeArrow(Graphics2D g, Edge edge) {
         super.decorateEdgeArrow(g, edge);
-
+        if (edge.highlighted) {
+            g.setColor(Color.ORANGE);
+        }
     }
+
+    final Color[] colors  = {
+            Color.BLUE,
+            Color.GREEN,
+            Color.MAGENTA,
+            Color.ORANGE,
+            Color.RED,
+            Color.CYAN
+    };
 
     @Override
     protected void decorateNodeInner(Graphics2D g, Node node) {
         super.decorateNodeInner(g, node);
-
+        if (node.visited) {
+            g.setColor(Color.LIGHT_GRAY);
+        }
+        if (node.strongComponentId != -1) {
+            g.setColor(colors[node.strongComponentId % colors.length]);
+        }
     }
 
     @Override
@@ -309,6 +327,9 @@ public class GraphEditor extends GraphVisualizer {
         }
         if (selectedNode == node) {
             g.setColor(Color.GREEN);
+        }
+        if (node.highlighted) {
+            g.setColor(Color.ORANGE);
         }
     }
 

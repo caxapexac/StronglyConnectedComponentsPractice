@@ -1,8 +1,10 @@
 package ru.eltech.logic;
 
+import ru.eltech.Main;
 import ru.eltech.logic.Algorithm;
 import ru.eltech.logic.FrameList;
 import ru.eltech.logic.Graph;
+import ru.eltech.view.MainWindow;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,6 +30,8 @@ public class KosarajuAlgorithm implements Algorithm {
      */
     @Override
     public FrameList process(Graph context) {
+        timeOutList = new ArrayList<Node>();
+        frames = new FrameList();
 
         Collection<Node> nodes = context.getNodes();
         for (Node node : nodes) {
@@ -56,7 +60,7 @@ public class KosarajuAlgorithm implements Algorithm {
         clearHighlightedNodes(context);
         clearHighlightedEdges(context);
         frames.add(context);
-
+        MainWindow.log.info("Алгоритм закончен. " + frames.count() + " итераций");
         return frames;
     }
 
@@ -78,7 +82,7 @@ public class KosarajuAlgorithm implements Algorithm {
                 timeOut(nextNode, graph);
             }
         }
-        timeOutList.add(nextNode);
+        if (nextNode != null) timeOutList.add(nextNode);
     }
 
     /**
