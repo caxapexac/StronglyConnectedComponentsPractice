@@ -302,15 +302,6 @@ public class GraphEditor extends GraphVisualizer {
         }
     }
 
-    final Color[] colors  = {
-            Color.BLUE,
-            Color.GREEN,
-            Color.MAGENTA,
-            Color.ORANGE,
-            Color.RED,
-            Color.CYAN
-    };
-
     @Override
     protected void decorateNodeInner(Graphics2D g, Node node) {
         super.decorateNodeInner(g, node);
@@ -318,7 +309,7 @@ public class GraphEditor extends GraphVisualizer {
             g.setColor(Color.LIGHT_GRAY);
         }
         if (node.strongComponentId != -1) {
-            g.setColor(colors[node.strongComponentId % colors.length]);
+            g.setColor(NodeColors.colors[node.strongComponentId % NodeColors.colors.length]);
         }
     }
 
