@@ -17,10 +17,20 @@ public final class FrameList {
     }
 
     public void add(Graph frame) {
+        frame.state = "";
+        frames.add(new Graph(frame));
+    }
+
+    public void add(Graph frame, String state) {
+        frame.state = state;
         frames.add(new Graph(frame));
     }
 
     public Graph get(int index) {
         return frames.get(index);
     }
+
+//    public void generateLastStateInfo(String whatStep, int timeOutListSize, String edgeInvertion) {
+//
+//    }
 }

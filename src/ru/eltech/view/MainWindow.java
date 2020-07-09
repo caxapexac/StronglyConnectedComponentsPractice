@@ -121,7 +121,7 @@ public final class MainWindow extends JFrame {
     // region LIFECYCLE
 
     public void playerPlaying() {
-        log.info("playerPlaying");
+        //log.info("playerPlaying");
         if (!graphEditor.isReadOnly) {
             graphEditor.isReadOnly = true;
             graphOrigin = graphEditor.getGraphCopy();
@@ -130,11 +130,11 @@ public final class MainWindow extends JFrame {
     }
 
     public void playerPausing() {
-        log.info("playerPausing");
+        //log.info("playerPausing");
     }
 
     public void playerStopping() {
-        log.info("playerStopping");
+        //log.info("playerStopping");
         if (graphEditor.isReadOnly) {
             graphEditor.isReadOnly = false;
             graphEditor.setGraphCopy(graphOrigin);
@@ -143,6 +143,8 @@ public final class MainWindow extends JFrame {
 
     public void playerVisualizing(Graph graph) {
         graphEditor.setGraphCopy(graph);
+        if (graph.state != null)
+            this.log.info(graph.state);
     }
 
     // endregion

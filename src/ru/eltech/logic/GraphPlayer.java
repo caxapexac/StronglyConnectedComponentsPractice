@@ -27,7 +27,7 @@ public final class GraphPlayer {
     }
 
     public void setFrameList(FrameList frameList) {
-        MainWindow.log.info("Frame list setup");
+        //MainWindow.log.info("Frame list setup");
         this.frameList = frameList;
         toolBar.playerChanged(this);
     }
@@ -40,18 +40,18 @@ public final class GraphPlayer {
         if (this.state == state) return;
         switch (state) {
             case Play:
-                MainWindow.log.info("Старт таймера");
+                MainWindow.log.info("Старт анимации");
                 if (frameList != null && currentFrame == frameList.count() - 1) currentFrame = 0;
                 timer.cancel();
                 timer = new Timer();
                 timer.schedule(new PlayerTask(), delay);
                 break;
             case Pause:
-                MainWindow.log.info("Пауза таймера");
+                MainWindow.log.info("Пауза анимации");
                 timer.cancel();
                 break;
             case Stop:
-                MainWindow.log.warning("Стоп таймера");
+                MainWindow.log.warning("Стоп анимации");
                 currentFrame = 0;
                 timer.cancel();
                 break;
@@ -92,6 +92,7 @@ public final class GraphPlayer {
         }
         currentFrame++;
         toolBar.playerChanged(this);
+        //MainWindow.log.info(String.valueOf(frameList.get(getCurrentFrame()).state));
         return true;
     }
 
@@ -109,6 +110,7 @@ public final class GraphPlayer {
         }
         currentFrame--;
         toolBar.playerChanged(this);
+        //MainWindow.log.info(String.valueOf(frameList.get(getCurrentFrame()).state));
         return true;
     }
 

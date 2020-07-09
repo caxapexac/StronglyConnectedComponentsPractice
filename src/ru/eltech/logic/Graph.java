@@ -14,6 +14,7 @@ public final class Graph {
     private int nextEdgeId;
     private final HashMap<Integer, Node> nodeMap;
     private final HashMap<Integer, Edge> edgeMap;
+    public String state = "";
 
     public Graph() {
         nextNodeId = 1;
@@ -25,6 +26,7 @@ public final class Graph {
     public Graph(Graph other) {
         this.nextNodeId = other.nextNodeId;
         this.nextEdgeId = other.nextEdgeId;
+        this.state = other.state;
         this.nodeMap = new HashMap<>();
         for (Node node : other.getNodes()) nodeMap.put(node.id, node.clone());
         this.edgeMap = new HashMap<>();
@@ -61,6 +63,14 @@ public final class Graph {
 
     public int getEdgesCount() {
         return edgeMap.size();
+    }
+
+    public int getVisitedNodesCount() {
+        int count = 0;
+        for(Node node : getNodes()) {
+            if(node.visited) ++count;
+        }
+        return count;
     }
 
     public Node getNode(Integer nodeId) {

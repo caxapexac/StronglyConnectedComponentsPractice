@@ -12,6 +12,7 @@ public final class KosarajuAlgorithm implements Algorithm {
     private FrameList frames;
     private int timer = 0;
     private boolean immediateReverse = true;
+    private String currentStep = "";
 
     public boolean isImmediateReverse() {
         return immediateReverse;
@@ -47,7 +48,7 @@ public final class KosarajuAlgorithm implements Algorithm {
     public FrameList process(Graph context) {
         timeOutList = new ArrayList<>();
         frames = new FrameList();
-        frames.add(context);
+        frames.add(context, "Старт алгоритма");
 
         timer = 0;
         Collection<Node> nodes = context.getNodes();
@@ -86,7 +87,7 @@ public final class KosarajuAlgorithm implements Algorithm {
         clearHighlightedEdges(context);
         frames.add(context);
 
-        MainWindow.log.info("Алгоритм закончен. " + frames.count() + " итераций");
+        MainWindow.log.info("Просчет алгоритма закончен. " + frames.count() + " итераций");
         return frames;
     }
 
@@ -100,23 +101,36 @@ public final class KosarajuAlgorithm implements Algorithm {
         timer++;
 
         startNode.highlighted = true;
-        frames.add(graph);//for animation
+        currentStep += "Подсчет времени выхода<br>Текущая вершина: " + startNode.getName() + "<br>";
+        frames.add(graph, currentStep);//for animation
 
         Collection<Edge> edgeList = graph.getEdgesFromNode(startNode);
         Node nextNode = null;
+        currentStep = "";
         for (Edge currentEdge : edgeList) {
 
             currentEdge.highlighted = true;
-            frames.add(graph);
-
             nextNode = graph.getNode(currentEdge.getTarget());
+            currentStep += "Переход в вершину " + nextNode.getName() + "<br>";
+            frames.add(graph, currentStep);
+            currentStep = "";
+
             if (!nextNode.visited) {
+                currentStep += "Вершина " + nextNode.getName() + " не посещена,&#10;&#13; рекурсивно обходим ее<br>";
                 timeOut(nextNode, graph);
                 //MainWindow.log.info("added " + Integer.toString(timer));
+            } else {
+                currentStep += "Вершина " + nextNode.getName() + " уже посещена<br>";
             }
         }
         startNode.timeOut = timer;
+        currentStep = "Выход из вызова функции обхода&#10;&#13; для вершины " + startNode.getName() + "<br>" +
+                "Вершина добавлена в список &#10;&#13;для поиска компонент, ее время выхода " +
+                timer + "<br>";
+        frames.add(graph, currentStep);
+
         timeOutList.add(startNode);
+        currentStep = "";
         timer++;
     }
 
@@ -155,7 +169,6 @@ public final class KosarajuAlgorithm implements Algorithm {
 
         node.strongComponentId = componentId;
         node.visited = true;
-
         node.highlighted = true;
         frames.add(graph);
 
@@ -163,6 +176,7 @@ public final class KosarajuAlgorithm implements Algorithm {
         for (Edge currentEdge : edgeList) {
 
             currentEdge.highlighted = true;
+
             frames.add(graph);
 
             Node nextNode = graph.getNode(currentEdge.getTarget());
