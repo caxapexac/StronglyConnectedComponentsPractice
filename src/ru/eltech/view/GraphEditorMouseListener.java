@@ -1,6 +1,7 @@
 package ru.eltech.view;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -46,6 +47,9 @@ public final class GraphEditorMouseListener implements MouseListener {
         GraphEditor graphEditor = (GraphEditor) e.getSource();
         if (graphEditor.isReadOnly) return;
         graphEditor.endDrag(e.getX(), e.getY());
+        if (e.getClickCount() == 2) {
+            graphEditor.scrollAreaAroundPoint(e.getX(), e.getY(), 100);
+        }
     }
 
     @Override
@@ -66,6 +70,10 @@ public final class GraphEditorMouseListener implements MouseListener {
         if (graphEditor.isReadOnly) return;
         if (e.getButton() == MouseEvent.BUTTON1) {
             graphEditor.endDrag(e.getX(), e.getY());
+            //если создали новую ноду
+            if (e.getClickCount() == 2) {
+                graphEditor.scrollAreaAroundPoint(e.getX(), e.getY(), 100);
+            }
         } else if (e.getButton() == MouseEvent.BUTTON3) {
             graphEditor.endConnecting(e.getX(), e.getY(), true, true);
         }

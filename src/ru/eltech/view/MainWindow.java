@@ -21,6 +21,7 @@ public final class MainWindow extends JFrame {
     private GraphEditor graphEditor;
     private GraphPlayerToolBar graphPlayerToolBar;
     private JScrollPane scrollPane;
+    JScrollPane scrolling;
 
     private Graph graphOrigin;
     private GraphPlayer graphPlayer;
@@ -39,12 +40,12 @@ public final class MainWindow extends JFrame {
     private void initialize() {
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         setContentPane(content);
-        setSize(1024, 760);
-        setLocationRelativeTo(null);
+        setMinimumSize(new Dimension(800, 600));
+        setSize(800, 600);
         setResizable(true);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setLocationRelativeTo(null);
         setJMenuBar(new MainMenuBar(this));
-
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent event) {
@@ -67,6 +68,12 @@ public final class MainWindow extends JFrame {
         graphPlayerToolBar.setParent(this);
         log.addHandler(new LoggerTextAreaHandler(loggerLabel));
         deserializeGraph(new File(AUTOSAVE_FILE), true);
+        scrolling = new JScrollPane(graphEditor,
+                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        scrolling.setPreferredSize(new Dimension(800, 600));
+        scrolling.setAutoscrolls(true);
+        content.add(scrolling);
     }
 
     public GraphEditor getGraphEditor() {

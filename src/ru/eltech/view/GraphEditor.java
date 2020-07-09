@@ -26,6 +26,8 @@ public final class GraphEditor extends GraphVisualizer {
      */
     private static final BasicStroke CONNECTING_STROKE = new BasicStroke(6, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 10, new float[]{5, 10}, 0);
 
+    public Dimension areaSize;
+    public int lastCreatedNodeRadius = 0;
     public boolean isReadOnly = false;
     public boolean isModified = false;
     private final Point draggingLast = new Point();
@@ -40,6 +42,7 @@ public final class GraphEditor extends GraphVisualizer {
         addMouseListener(new GraphEditorMouseListener());
         addMouseMotionListener(new GraphEditorMouseMotionListener());
         addKeyListener(new GraphEditorKeyListener());
+        areaSize = new Dimension(0, 0);
     }
 
     @Override
@@ -196,6 +199,66 @@ public final class GraphEditor extends GraphVisualizer {
     public void destroySelected() {
         if (innerDestroySelectedNode() | innerDestroySelectedEdge()) repaint();
     }
+
+    /**
+     * @apiNote Прокручивает поле для рисования, вызывается при создании/окончании перетаскивания
+     * ноды близко к нижнему/правому краю экрана
+     * @implNote Трогать на свой страх и риск
+     */
+    public void scrollAreaAroundPoint(int x, int y, int howMuchToScroll) {
+        boolean changed = false;
+        int updateX = x - this.lastCreatedNodeRadius;
+        int updateY = y - this.lastCreatedNodeRadius;
+        if (updateX < 0) updateX = 0;
+        if (updateY < 0) updateY = 0;
+
+        Rectangle rect = new Rectangle(updateX, updateY,
+                this.lastCreatedNodeRadius*2,
+                this.lastCreatedNodeRadius*2);
+        this.scrollRectToVisible(rect);
+
+        int thisWidth = updateX + this.lastCreatedNodeRadius + howMuchToScroll;
+        if (thisWidth > this.areaSize.width) {
+            this.areaSize.width = thisWidth;
+            changed = true;
+        }
+
+        int thisHeight = updateY + this.lastCreatedNodeRadius + howMuchToScroll;
+        if (thisHeight > this.areaSize.height) {
+            this.areaSize.height = thisHeight;
+            changed = true;
+        }
+
+        if (changed) {
+            //Update client's preferred size because
+            //the area taken up by the graphics has
+            //gotten larger or smaller (if cleared).
+            this.setPreferredSize(this.areaSize);
+
+            //Let the scroll pane know to update itself
+            //and its scrollbars.
+            this.revalidate();
+        }
+    }
+
+    public void scrollRight(int howMuch){
+//        scrollRectToVisible(new Rectangle(getWidth(), 0, howMuch, howMuch));
+//        areaSize.width += howMuch;
+//        setPreferredSize(this.areaSize);
+//        revalidate();
+//        repaint();
+        scrollAreaAroundPoint(getWidth() - 1, 1, howMuch);
+    }
+
+    public void scrollDown(int howMuch){
+//        scrollRectToVisible(new Rectangle(0, getHeight(), howMuch, howMuch));
+//        areaSize.height += howMuch;
+//        setPreferredSize(this.areaSize);
+//        revalidate();
+//        repaint();
+        scrollAreaAroundPoint(1, getHeight() - 1, howMuch);
+    }
+
 
     private boolean innerDestroySelectedNode() {
         if (selectedNode == null) return false;

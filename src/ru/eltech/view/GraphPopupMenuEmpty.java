@@ -18,6 +18,12 @@ public final class GraphPopupMenuEmpty extends JPopupMenu {
         JMenuItem clearMenuItem = new JMenuItem("Очистить граф");
         clearMenuItem.addActionListener((action) -> graphEditor.clearGraph());
         add(clearMenuItem);
+        JMenuItem scrollDownMenuItem = new JMenuItem("Расширить холст вниз");
+        scrollDownMenuItem.addActionListener((action) -> graphEditor.scrollDown(100));
+        add(scrollDownMenuItem);
+        JMenuItem scrollRightMenuItem = new JMenuItem("Расширить холст вправо");
+        scrollRightMenuItem.addActionListener((action) -> graphEditor.scrollRight(100));
+        add(scrollRightMenuItem);
     }
 
     /**
