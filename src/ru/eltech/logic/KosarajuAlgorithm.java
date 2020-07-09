@@ -170,6 +170,7 @@ public final class KosarajuAlgorithm implements Algorithm {
                 findComponent(componentId, nextNode, graph);
             } else if (nextNode.strongComponentId != node.strongComponentId) {
                 currentEdge.highlighted = false;
+                currentEdge.connectsStrongComponents = true;
                 frames.add(graph);
             }
         }

@@ -305,6 +305,8 @@ public final class GraphEditor extends GraphVisualizer {
         if (isReadOnly) {
             if (edge.highlighted) {
                 g.setColor(Color.ORANGE);
+            } else if (edge.connectsStrongComponents) {
+                g.setColor(new Color(150, 150, 150));
             }
         }
     }
@@ -315,6 +317,8 @@ public final class GraphEditor extends GraphVisualizer {
         if (isReadOnly) {
             if (edge.highlighted) {
                 g.setColor(Color.ORANGE);
+            } else if (edge.connectsStrongComponents) {
+                g.setColor(new Color(150, 150, 150));
             }
         }
     }
@@ -399,6 +403,7 @@ public final class GraphEditor extends GraphVisualizer {
     public void removeNode(Integer id) {
         Node node = graph.getNode(id);
         if (node != null) graph.destroyNode(node);
+        repaint();
     }
 
     public void initializeAddEdge(Integer id) {

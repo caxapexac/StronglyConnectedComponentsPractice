@@ -9,6 +9,7 @@ public final class Edge {
     private Integer target;
 
     public boolean highlighted = false;
+    public boolean connectsStrongComponents = false;
 
     public Edge(Integer id, Node source, Node target) {
         this.id = id;
@@ -21,6 +22,7 @@ public final class Edge {
         this.source = other.source;
         this.target = other.target;
         this.highlighted = other.highlighted;
+        this.connectsStrongComponents = other.connectsStrongComponents;
     }
 
     public Integer getSource() {
