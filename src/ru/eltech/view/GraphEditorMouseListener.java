@@ -11,6 +11,7 @@ public final class GraphEditorMouseListener implements MouseListener {
     @Override
     public void mouseClicked(MouseEvent e) {
         GraphEditor graphEditor = (GraphEditor) e.getSource();
+        if (graphEditor.isReadOnly) return;
         if (e.getClickCount() == 2) {
             if (e.getButton() == MouseEvent.BUTTON1) {
                 if (graphEditor.hasSelected()) graphEditor.destroySelected();
@@ -43,12 +44,14 @@ public final class GraphEditorMouseListener implements MouseListener {
     @Override
     public void mouseExited(MouseEvent e) {
         GraphEditor graphEditor = (GraphEditor) e.getSource();
+        if (graphEditor.isReadOnly) return;
         graphEditor.endDrag(e.getX(), e.getY());
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
         GraphEditor graphEditor = (GraphEditor) e.getSource();
+        if (graphEditor.isReadOnly) return;
         if (e.getButton() == MouseEvent.BUTTON1) {
             graphEditor.select(e.getX(), e.getY());
             graphEditor.startDrag(e.getX(), e.getY());
@@ -60,6 +63,7 @@ public final class GraphEditorMouseListener implements MouseListener {
     @Override
     public void mouseReleased(MouseEvent e) {
         GraphEditor graphEditor = (GraphEditor) e.getSource();
+        if (graphEditor.isReadOnly) return;
         if (e.getButton() == MouseEvent.BUTTON1) {
             graphEditor.endDrag(e.getX(), e.getY());
         } else if (e.getButton() == MouseEvent.BUTTON3) {

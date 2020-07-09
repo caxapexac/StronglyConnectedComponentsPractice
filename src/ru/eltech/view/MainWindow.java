@@ -3,46 +3,39 @@ package ru.eltech.view;
 import ru.eltech.logic.*;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 
-public final class MainWindow extends JFrame implements ActionListener, ChangeListener {
+public final class MainWindow extends JFrame {
     public static Logger log = Logger.getLogger(MainWindow.class.getName());
 
     private JPanel content;
-    private JTextPane loggerTextPane;
+    private JLabel loggerLabel;
     private GraphEditor graphEditor;
-    private JButton toolBarAutoButton;
-    private JButton toolBarStartButton;
-    private JButton toolBarStepBackButton;
-    private JButton toolBarStepForwardButton;
-    private JButton toolBarPauseButton;
-    private JButton toolBarStopButton;
-    private JSlider toolBarSpeedSlider;
-    private JProgressBar bottomProgressBar;
+    private GraphPlayerToolBar graphPlayerToolBar;
 
-    private Graph graphOrigin = new Graph();
-    private final GraphPlayer graphPlayer = new GraphPlayer(new GraphPlayerListener(this));
+    private Graph graphOrigin;
+    private GraphPlayer graphPlayer;
+
     private final Algorithm algorithm = new KosarajuAlgorithm();
 
     private final String AUTOSAVE_FILE = "autosave.graph";
 
-
     public MainWindow() {
         super("Strongly Connected Components");
+        $$$setupUI$$$();
         initialize();
         pack();
     }
 
     private void initialize() {
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         setContentPane(content);
         setSize(1024, 760);
         setLocationRelativeTo(null);
@@ -53,63 +46,103 @@ public final class MainWindow extends JFrame implements ActionListener, ChangeLi
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent event) {
-                serializeGraph(new File(AUTOSAVE_FILE), true);
                 System.exit(0);
             }
 
             @Override
             public void windowClosing(WindowEvent event) {
+                int reply = JOptionPane.showConfirmDialog(null, "Сохранить текущий граф в файл " + AUTOSAVE_FILE + "?", "Выход", JOptionPane.YES_NO_CANCEL_OPTION);
+                if (reply == JOptionPane.YES_OPTION) {
+                    serializeGraph(new File(AUTOSAVE_FILE), true);
+                } else if (reply == JOptionPane.CANCEL_OPTION) {
+                    return;
+                }
                 windowClosed(event);
             }
         });
-        toolBarAutoButton.addActionListener(this);
-        toolBarStartButton.addActionListener(this);
-        toolBarStepBackButton.addActionListener(this);
-        toolBarStepForwardButton.addActionListener(this);
-        toolBarPauseButton.addActionListener(this);
-        toolBarStopButton.addActionListener(this);
-        toolBarSpeedSlider.addChangeListener(this);
-        log.addHandler(new LoggerTextAreaHandler(loggerTextPane));
+        graphOrigin = new Graph();
+        graphPlayer = new GraphPlayer(graphPlayerToolBar);
+        graphPlayerToolBar.setParent(this);
+        log.addHandler(new LoggerTextAreaHandler(loggerLabel));
         deserializeGraph(new File(AUTOSAVE_FILE), true);
     }
 
-    /**
-     * Восстановление оригинального графа при завершении анимации
-     */
-    private void copyOriginToEditor() {
-        graphEditor.setGraphCopy(graphOrigin);
-        graphEditor.isReadOnly = false;
-        repaint();
+    public GraphEditor getGraphEditor() {
+        return graphEditor;
+    }
+
+    public GraphPlayer getGraphPlayer() {
+        return graphPlayer;
     }
 
     /**
-     * Сохранение оригинального графа при старте анимации
+     * @return актуальная версия графа
      */
-    private void copyEditorToOrigin() {
-        graphOrigin = graphEditor.getGraphCopy();
-        graphEditor.isReadOnly = true;
+    public Graph getGraphOrigin() {
+        if (!graphEditor.isReadOnly && graphEditor.isModified) {
+            graphOrigin = graphEditor.getGraphCopy();
+        }
+        return graphOrigin;
     }
+
+    /**
+     * Принудительно заменяет текущий граф и его визуализацию
+     */
+    public void setGraphOrigin(Graph graph) {
+        graphPlayer.setState(GraphPlayer.State.Stop);
+        graphOrigin = graph;
+        graphEditor.setGraphCopy(graph);
+        graphEditor.isReadOnly = false;
+    }
+
+    // region LIFECYCLE
+
+    public void playerPlaying() {
+        log.info("playerPlaying");
+        if (!graphEditor.isReadOnly) {
+            graphEditor.isReadOnly = true;
+            graphOrigin = graphEditor.getGraphCopy();
+            graphPlayer.setFrameList(algorithm.process(getGraphOrigin()));
+        }
+    }
+
+    public void playerPausing() {
+        log.info("playerPausing");
+    }
+
+    public void playerStopping() {
+        log.info("playerStopping");
+        if (graphEditor.isReadOnly) {
+            graphEditor.isReadOnly = false;
+            graphEditor.setGraphCopy(graphOrigin);
+        }
+    }
+
+    public void playerVisualizing(Graph graph) {
+        graphEditor.setGraphCopy(graph);
+    }
+
+    // endregion
 
     //region ACTIONS
 
     public void createNewGraph() {
-        graphOrigin = new Graph();
-        copyOriginToEditor();
+        setGraphOrigin(new Graph());
     }
 
     public void loadExampleGraph() {
-        graphOrigin = new Graph();
-        Node n1 = graphOrigin.createNode(100, 100);
-        Node n2 = graphOrigin.createNode(100, 500);
-        Node n3 = graphOrigin.createNode(500, 100);
-        Node n4 = graphOrigin.createNode(500, 500);
-        Node n5 = graphOrigin.createNode(300, 300);
-        graphOrigin.createEdge(n2, n1);
-        graphOrigin.createEdge(n1, n3);
-        graphOrigin.createEdge(n1, n5);
-        graphOrigin.createEdge(n5, n4);
-        graphOrigin.createEdge(n5, n2);
-        copyOriginToEditor();
+        Graph graph = new Graph();
+        Node n1 = graph.createNode(100, 100);
+        Node n2 = graph.createNode(100, 500);
+        Node n3 = graph.createNode(500, 100);
+        Node n4 = graph.createNode(500, 500);
+        Node n5 = graph.createNode(300, 300);
+        graph.createEdge(n2, n1);
+        graph.createEdge(n1, n3);
+        graph.createEdge(n1, n5);
+        graph.createEdge(n5, n4);
+        graph.createEdge(n5, n2);
+        setGraphOrigin(graph);
     }
 
     public void serializeGraph() {
@@ -129,7 +162,7 @@ public final class MainWindow extends JFrame implements ActionListener, ChangeLi
         String fileName = file.getAbsolutePath();
         if (!fileName.endsWith(".graph")) file = new File(fileName + ".graph");
         try (FileOutputStream fos = new FileOutputStream(file)) {
-            graphOrigin.save(fos);
+            getGraphOrigin().save(fos);
             if (!silently) JOptionPane.showMessageDialog(null, "Граф сохранён успешно " + file.getAbsolutePath());
         } catch (IOException e) {
             if (!silently)
@@ -152,8 +185,7 @@ public final class MainWindow extends JFrame implements ActionListener, ChangeLi
 
     public void deserializeGraph(File file, boolean silently) {
         try (FileInputStream fis = new FileInputStream(file)) {
-            graphOrigin = new Graph().load(fis);
-            copyOriginToEditor();
+            setGraphOrigin(new Graph().load(fis));
             if (!silently) JOptionPane.showMessageDialog(null, "Граф загружен успешно " + file.getAbsolutePath());
         } catch (IOException e) {
             if (!silently) e.printStackTrace();
@@ -163,30 +195,13 @@ public final class MainWindow extends JFrame implements ActionListener, ChangeLi
     }
 
     public void showNodesList() {
+        JOptionPane.showMessageDialog(this, getGraphOrigin().getNodesCount(), "TODO", JOptionPane.INFORMATION_MESSAGE);
         // TODO
-        //String nodesList = origin.getListOfNodes();
-        //JOptionPane.showMessageDialog(this, nodesList, "text", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public void showEdgesList() {
+        JOptionPane.showMessageDialog(this, getGraphOrigin().getEdgesCount(), "TODO", JOptionPane.INFORMATION_MESSAGE);
         // TODO
-    }
-
-    public void startVisualizing() {
-        log.info("startVisualizing");
-        copyEditorToOrigin();
-        graphPlayer.setFrameList(algorithm.process(new Graph(graphOrigin)));
-    }
-
-    public void stepVisualizing(Graph graph) {
-        //log.info("stepVisualizing");
-        if (!graphEditor.isReadOnly) startVisualizing();
-        graphEditor.setGraphCopy(graph);
-    }
-
-    public void stopVisualizing() {
-        log.info("stopVisualizing");
-        copyOriginToEditor();
     }
 
     public void showInstruction() {
@@ -197,33 +212,8 @@ public final class MainWindow extends JFrame implements ActionListener, ChangeLi
         showHtmlFormattedMessageDialog("/resources/docs/authors.html", "Authors", JOptionPane.PLAIN_MESSAGE);
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        Object eSource = e.getSource();
-        if (eSource == toolBarAutoButton) {
-            startVisualizing();
-        } else if (eSource == toolBarStartButton) {
-            if (graphPlayer.getState() == GraphPlayer.State.Empty) startVisualizing();
-            graphPlayer.setState(GraphPlayer.State.Started);
-        } else if (eSource == toolBarStepBackButton) {
-            graphPlayer.stepBackward();
-        } else if (eSource == toolBarStepForwardButton) {
-            graphPlayer.stepForward();
-        } else if (eSource == toolBarPauseButton) {
-            graphPlayer.setState(GraphPlayer.State.Paused);
-        } else if (eSource == toolBarStopButton) {
-            graphPlayer.setState(GraphPlayer.State.Stoped);
-        }
-    }
-
-    @Override
-    public void stateChanged(ChangeEvent e) {
-        JSlider slider = (JSlider) e.getSource();
-        if (slider == toolBarSpeedSlider) {
-            int speed = slider.getValue();
-            graphPlayer.setDelay(speed);
-            log.info("speed changed to " + speed);
-        }
+    public void clearLog() {
+        loggerLabel.setText("<html>Log:<br></html>");
     }
 
     //endregion
@@ -241,7 +231,6 @@ public final class MainWindow extends JFrame implements ActionListener, ChangeLi
     }
 
     /**
-     * @param filename
      * @return file as String
      * @apiNote Helper function to read html resources
      */
@@ -257,13 +246,6 @@ public final class MainWindow extends JFrame implements ActionListener, ChangeLi
         return null;
     }
 
-    {
-// GUI initializer generated by IntelliJ IDEA GUI Designer
-// >>> IMPORTANT!! <<<
-// DO NOT EDIT OR ADD ANY CODE HERE!
-        $$$setupUI$$$();
-    }
-
     /**
      * Method generated by IntelliJ IDEA GUI Designer
      * >>> IMPORTANT!! <<<
@@ -275,75 +257,26 @@ public final class MainWindow extends JFrame implements ActionListener, ChangeLi
         content = new JPanel();
         content.setLayout(new BorderLayout(0, 0));
         content.setMinimumSize(new Dimension(622, 400));
-        final JToolBar toolBar1 = new JToolBar();
-        toolBar1.setMinimumSize(new Dimension(613, 64));
-        toolBar1.setOrientation(1);
-        toolBar1.setPreferredSize(new Dimension(777, 100));
-        content.add(toolBar1, BorderLayout.NORTH);
-        final JPanel panel1 = new JPanel();
-        panel1.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-        panel1.setPreferredSize(new Dimension(10, 50));
-        toolBar1.add(panel1);
-        toolBarAutoButton = new JButton();
-        toolBarAutoButton.setIcon(new ImageIcon(getClass().getResource("/resources/icons/repeat-24px.png")));
-        toolBarAutoButton.setText("");
-        panel1.add(toolBarAutoButton);
-        toolBarStartButton = new JButton();
-        toolBarStartButton.setIcon(new ImageIcon(getClass().getResource("/resources/icons/play_arrow-24px.png")));
-        toolBarStartButton.setText("");
-        panel1.add(toolBarStartButton);
-        toolBarStepBackButton = new JButton();
-        toolBarStepBackButton.setIcon(new ImageIcon(getClass().getResource("/resources/icons/skip_previous-24px.png")));
-        toolBarStepBackButton.setText("");
-        panel1.add(toolBarStepBackButton);
-        toolBarStepForwardButton = new JButton();
-        toolBarStepForwardButton.setIcon(new ImageIcon(getClass().getResource("/resources/icons/skip_next-24px.png")));
-        toolBarStepForwardButton.setText("");
-        panel1.add(toolBarStepForwardButton);
-        toolBarPauseButton = new JButton();
-        toolBarPauseButton.setIcon(new ImageIcon(getClass().getResource("/resources/icons/pause-24px.png")));
-        toolBarPauseButton.setText("");
-        panel1.add(toolBarPauseButton);
-        toolBarStopButton = new JButton();
-        toolBarStopButton.setIcon(new ImageIcon(getClass().getResource("/resources/icons/stop-24px.png")));
-        toolBarStopButton.setText("");
-        panel1.add(toolBarStopButton);
-        toolBarSpeedSlider = new JSlider();
-        toolBarSpeedSlider.setMaximum(5000);
-        toolBarSpeedSlider.setMaximumSize(new Dimension(300, 31));
-        toolBarSpeedSlider.setMinimum(1);
-        toolBarSpeedSlider.setPaintLabels(false);
-        toolBarSpeedSlider.setPaintTicks(true);
-        toolBarSpeedSlider.setValue(1000);
-        panel1.add(toolBarSpeedSlider);
-        final JLabel label1 = new JLabel();
-        label1.setText("Delay");
-        panel1.add(label1);
-        final JToolBar.Separator toolBar$Separator1 = new JToolBar.Separator();
-        panel1.add(toolBar$Separator1);
-        final JToolBar.Separator toolBar$Separator2 = new JToolBar.Separator();
-        panel1.add(toolBar$Separator2);
-        final JPanel panel2 = new JPanel();
-        panel2.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-        panel2.setMinimumSize(new Dimension(70, 10));
-        panel2.setPreferredSize(new Dimension(206, 10));
-        toolBar1.add(panel2);
-        final JLabel label2 = new JLabel();
-        label2.setText("Progress");
-        panel2.add(label2);
-        bottomProgressBar = new JProgressBar();
-        bottomProgressBar.setValue(30);
-        panel2.add(bottomProgressBar);
         graphEditor = new GraphEditor();
         graphEditor.setMinimumSize(new Dimension(100, 10));
         graphEditor.setPreferredSize(new Dimension(512, 10));
         content.add(graphEditor, BorderLayout.CENTER);
-        final JToolBar toolBar2 = new JToolBar();
-        toolBar2.setMinimumSize(new Dimension(64, 22));
-        toolBar2.setPreferredSize(new Dimension(256, 22));
-        content.add(toolBar2, BorderLayout.EAST);
-        loggerTextPane = new JTextPane();
-        toolBar2.add(loggerTextPane);
+        final JToolBar toolBar1 = new JToolBar();
+        toolBar1.setMinimumSize(new Dimension(64, 22));
+        toolBar1.setPreferredSize(new Dimension(256, 22));
+        content.add(toolBar1, BorderLayout.EAST);
+        final JScrollPane scrollPane1 = new JScrollPane();
+        toolBar1.add(scrollPane1);
+        loggerLabel = new JLabel();
+        loggerLabel.setText("Log:\n1\n2");
+        loggerLabel.setVerticalAlignment(1);
+        loggerLabel.setVerticalTextPosition(1);
+        scrollPane1.setViewportView(loggerLabel);
+        graphPlayerToolBar = new GraphPlayerToolBar();
+        graphPlayerToolBar.setMaximumSize(new Dimension(10000, 10000));
+        graphPlayerToolBar.setMinimumSize(new Dimension(10, 10));
+        graphPlayerToolBar.setPreferredSize(new Dimension(1000, 100));
+        content.add(graphPlayerToolBar, BorderLayout.NORTH);
     }
 
     /**

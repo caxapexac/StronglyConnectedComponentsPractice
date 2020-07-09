@@ -16,7 +16,7 @@ public final class GraphEditorKeyListener implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         GraphEditor graphEditor = (GraphEditor) e.getSource();
-
+        if (graphEditor.isReadOnly) return;
         switch (e.getKeyCode()) {
             case KeyEvent.VK_LEFT:
                 graphEditor.moveGraphStep(e.isShiftDown() ? -10 : -1, 0);

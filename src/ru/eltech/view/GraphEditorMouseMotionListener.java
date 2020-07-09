@@ -11,6 +11,7 @@ public final class GraphEditorMouseMotionListener implements MouseMotionListener
     @Override
     public void mouseDragged(MouseEvent e) {
         GraphEditor graphEditor = (GraphEditor) e.getSource();
+        if (graphEditor.isReadOnly) return;
         graphEditor.drag(e.getX(), e.getY());
         graphEditor.connecting(e.getX(), e.getY());
     }

@@ -5,15 +5,17 @@ import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
 public final class LoggerTextAreaHandler extends Handler {
-    private final JTextPane textPane;
+    private final JLabel textLabel;
 
-    public LoggerTextAreaHandler(JTextPane textPane) {
-        this.textPane = textPane;
+    public LoggerTextAreaHandler(JLabel textLabel) {
+        this.textLabel = textLabel;
     }
 
     @Override
     public void publish(LogRecord record) {
-        textPane.setText(textPane.getText() + String.format("%s %s\n", record.getLevel().getLocalizedName(), record.getMessage()));
+        String previous = "<html>Log:<br>";
+        if (textLabel.getText().contains("</html>")) previous = textLabel.getText().substring(0, textLabel.getText().indexOf("</html>"));
+        textLabel.setText(previous + String.format("%s %s<br></html>", record.getLevel().getLocalizedName(), record.getMessage()));
     }
 
     @Override
@@ -23,6 +25,6 @@ public final class LoggerTextAreaHandler extends Handler {
 
     @Override
     public void close() throws SecurityException {
-        textPane.setText("");
+        textLabel.setText("");
     }
 }

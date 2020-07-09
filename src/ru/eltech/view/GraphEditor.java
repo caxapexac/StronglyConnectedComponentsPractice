@@ -4,8 +4,8 @@ import ru.eltech.logic.Edge;
 import ru.eltech.logic.Graph;
 import ru.eltech.logic.Node;
 
+import javax.swing.*;
 import java.awt.*;
-import java.util.Random;
 
 /**
  * Класс, отвечающий за логику редактирования графа
@@ -27,6 +27,7 @@ public final class GraphEditor extends GraphVisualizer {
     private static final BasicStroke CONNECTING_STROKE = new BasicStroke(6, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 10, new float[]{5, 10}, 0);
 
     public boolean isReadOnly = false;
+    public boolean isModified = false;
     private final Point draggingLast = new Point();
     private final Point connectingLast = new Point();
     private Node draggingNode;
@@ -49,6 +50,7 @@ public final class GraphEditor extends GraphVisualizer {
         selectedEdge = null;
         connectingSourceNode = null;
         super.setGraphCopy(renderGraph);
+        isModified = false;
     }
 
     /**
@@ -120,6 +122,8 @@ public final class GraphEditor extends GraphVisualizer {
             fromNode.getPosition().translate(mouseDX, mouseDY);
             toNode.getPosition().translate(mouseDX, mouseDY);
             repaint();
+        } else {
+            // Drag screen TODO (need additional fix)
         }
 
         draggingLast.move(x, y);
@@ -270,6 +274,12 @@ public final class GraphEditor extends GraphVisualizer {
     }
 
     @Override
+    public void repaint() {
+        isModified = true;
+        super.repaint();
+    }
+
+    @Override
     public void paint(Graphics g) {
         super.paint(g);
         Graphics2D g2d = (Graphics2D) g;
@@ -277,6 +287,9 @@ public final class GraphEditor extends GraphVisualizer {
             g2d.setColor(Color.GREEN);
             g2d.setStroke(CONNECTING_STROKE);
             g2d.drawLine(connectingSourceNode.getPosition().x, connectingSourceNode.getPosition().y, connectingLast.x, connectingLast.y);
+        }
+        if (isModified) {
+            g2d.drawString("*", 10, 10);
         }
     }
 
@@ -343,27 +356,35 @@ public final class GraphEditor extends GraphVisualizer {
     //region ACTIONS POPUP
 
     public void destroyEdge(Integer id) {
-        // TODO
+        Edge edge = graph.getEdge(id);
+        if (edge != null) graph.destroyEdge(edge);
+        repaint();
     }
 
     public void changeEdgeStroke(Integer id) {
+        //Object[] radiusValues = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+        //int radius = (Integer) JOptionPane.showInputDialog(this, "Введите толщину", "Модификация", JOptionPane.PLAIN_MESSAGE, null, radiusValues, radiusValues[radiusValues.length / 2]);
         // TODO
     }
 
     public void changeEdgeColor(Integer id) {
+        // Color color = JColorChooser.showDialog(this, "Модификация", Color.BLACK);
         // TODO
     }
 
     public void createNewNode(int x, int y) {
-        // TODO
+        graph.createNode(x, y);
+        repaint();
     }
 
     public void clearGraph() {
-        // TODO
+        graph.clear();
+        repaint();
     }
 
     public void removeNode(Integer id) {
-        // TODO
+        Node node = graph.getNode(id);
+        if (node != null) graph.destroyNode(node);
     }
 
     public void initializeAddEdge(Integer id) {
@@ -371,14 +392,18 @@ public final class GraphEditor extends GraphVisualizer {
     }
 
     public void changeNodeRadius(Integer id) {
+        //Object[] radiusValues = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+        //int radius = (Integer) JOptionPane.showInputDialog(this, "Введите радиус", "Модификация", JOptionPane.PLAIN_MESSAGE, null, radiusValues, radiusValues[radiusValues.length / 2]);
         // TODO
     }
 
     public void changeNodeColor(Integer id) {
+        // Color color = JColorChooser.showDialog(this, "Модификация", Color.BLACK);
         // TODO
     }
 
     public void changeNodeText(Integer id) {
+        //String name = JOptionPane.showInputDialog(this, "Введите новое имя", "Модификация", JOptionPane.QUESTION_MESSAGE);
         // TODO
     }
 
@@ -387,6 +412,7 @@ public final class GraphEditor extends GraphVisualizer {
     //region ACTIONS KEYSTROKE
 
     public void moveGraphStep(int x, int y) {
+        drag(x, y);
         // TODO?
     }
 

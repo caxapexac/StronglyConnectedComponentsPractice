@@ -28,6 +28,8 @@ public final class KosarajuAlgorithm implements Algorithm {
      */
     @Override
     public FrameList process(Graph context) {
+        context = new Graph(context); // Убираем лишние метаданные
+
         timeOutList = new ArrayList<>();
         frames = new FrameList();
         frames.add(context);

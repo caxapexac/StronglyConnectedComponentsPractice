@@ -13,7 +13,7 @@ public final class GraphPopupMenuNode extends JPopupMenu {
         addSeparator();
         JMenuItem addEdgeMenuItem = new JMenuItem("Создать дугу");
         addEdgeMenuItem.addActionListener((action) -> graphEditor.initializeAddEdge(id));
-        add(addEdgeMenuItem);
+        //add(addEdgeMenuItem); TODO
         addSeparator();
         JMenuItem changeNodeRadiusMenuItem = new JMenuItem("Изменить радиус узла");
         changeNodeRadiusMenuItem.addActionListener((action) -> graphEditor.changeNodeRadius(id));

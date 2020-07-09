@@ -62,8 +62,8 @@ public final class MainMenuBar extends JMenuBar implements ActionListener {
         editMenu.add(edgesMenuItem);
         add(editMenu);
 
-        viewMenu.add(startMenuItem);
-        add(viewMenu);
+        //viewMenu.add(startMenuItem);
+        //add(viewMenu);
 
         helpMenu.add(appMenuItem);
         helpMenu.add(authorMenuItem);
@@ -89,7 +89,7 @@ public final class MainMenuBar extends JMenuBar implements ActionListener {
         } else if (eSource == edgesMenuItem) {
             parent.showEdgesList();
         } else if (eSource == startMenuItem) {
-            parent.startVisualizing();
+            //parent.startVisualizing();
         } else if (eSource == appMenuItem) {
             parent.showInstruction();
         } else if (eSource == authorMenuItem) {

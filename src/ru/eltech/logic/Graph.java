@@ -124,6 +124,7 @@ public final class Graph {
     }
 
     public boolean destroyEdge(Edge edge) {
+        if (edge == null) return false;
         Edge removed = edgeMap.remove(edge.id);
         if (removed == edge) return true;
         edgeMap.put(removed.id, removed);
