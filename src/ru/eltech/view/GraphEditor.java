@@ -353,6 +353,20 @@ public final class GraphEditor extends GraphVisualizer {
         super.decorateNodeText(g, node);
     }
 
+    @Override
+    protected void displayNode(Graphics2D g, Node node) {
+        super.displayNode(g, node);
+        if (isReadOnly) {
+            g.setFont(fontAdditional);
+            g.setColor(Color.BLACK);
+            g.setStroke(DEFAULT_STROKE);
+            FontMetrics fm = g.getFontMetrics();
+            int tx = node.getPosition().x - fm.stringWidth(node.getName()) / 2;
+            int ty = node.getPosition().y + fm.getHeight() / 2 + fm.getAscent();
+            g.drawString(Integer.toString(node.timeOut), tx, ty);
+        }
+    }
+
     //region ACTIONS POPUP
 
     public void destroyEdge(Integer id) {

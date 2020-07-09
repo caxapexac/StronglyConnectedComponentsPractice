@@ -14,6 +14,7 @@ public final class Node {
     public boolean visited = false;
     public boolean highlighted = false;
     public int strongComponentId = -1;
+    public int timeOut = 0;
 
     public Node(Integer id, int x, int y) {
         this.id = id;
@@ -30,6 +31,7 @@ public final class Node {
         this.visited = other.visited;
         this.highlighted = other.highlighted;
         this.strongComponentId = other.strongComponentId;
+        this.timeOut = other.timeOut;
     }
 
     public String getName() {

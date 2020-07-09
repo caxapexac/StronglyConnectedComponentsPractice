@@ -35,6 +35,10 @@ public class GraphVisualizer extends JPanel {
      * Шрифт для отображения имён нод
      */
     protected static final Font font = new Font(Font.DIALOG, Font.BOLD, 24);
+    /**
+     * Шрифт для отображения времени выхода из ноды
+     */
+    protected static final Font fontAdditional = new Font(Font.DIALOG, Font.ITALIC, 12);
 
     protected Graph graph = new Graph();
 
@@ -155,17 +159,31 @@ public class GraphVisualizer extends JPanel {
         g.setStroke(DEFAULT_STROKE);
     }
 
-    private void displayNode(Graphics2D g, Node node) {
+    protected void displayNode(Graphics2D g, Node node) {
         int radius = node.getRadius();
         int diameter = radius * 2;
+        Polygon hex = createHexagon(node.getPosition(), radius);
+
         decorateNodeInner(g, node);
-        g.fillOval(node.getPosition().x - radius, node.getPosition().y - radius, diameter, diameter);
+        //g.fillOval(node.getPosition().x - radius, node.getPosition().y - radius, diameter, diameter);
+        g.fillPolygon(hex);
         decorateNodeOuter(g, node);
-        g.drawOval(node.getPosition().x - radius, node.getPosition().y - radius, diameter, diameter);
+        //g.drawOval(node.getPosition().x - radius, node.getPosition().y - radius, diameter, diameter);
+        g.drawPolygon(hex);
         decorateNodeText(g, node);
         FontMetrics fm = g.getFontMetrics();
         int tx = node.getPosition().x - fm.stringWidth(node.getName()) / 2;
         int ty = node.getPosition().y - fm.getHeight() / 2 + fm.getAscent();
         g.drawString(node.getName(), tx, ty);
+    }
+
+    private Polygon createHexagon(Point position, int radius) {
+        Polygon polygon = new Polygon();
+        for (int i = 0; i < 6; i++) {
+            int x = (int) (position.x + radius * Math.cos(i * 2 * Math.PI / 6D));
+            int y = (int) (position.y + radius * Math.sin(i * 2 * Math.PI / 6D));
+            polygon.addPoint(x, y);
+        }
+        return polygon;
     }
 }

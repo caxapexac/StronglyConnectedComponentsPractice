@@ -5,7 +5,7 @@ package ru.eltech;
 import ru.eltech.view.MainWindow;
 import javax.swing.*;
 
-public class Main {
+public final class Main {
     public static void main(String[] args) {
 //        try {
 //            UIManager.setLookAndFeel("com.jtattoo.plaf.graphite.GraphiteLookAndFeel");

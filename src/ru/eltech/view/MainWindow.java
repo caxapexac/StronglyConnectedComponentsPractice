@@ -102,7 +102,7 @@ public final class MainWindow extends JFrame {
         if (!graphEditor.isReadOnly) {
             graphEditor.isReadOnly = true;
             graphOrigin = graphEditor.getGraphCopy();
-            graphPlayer.setFrameList(algorithm.process(getGraphOrigin()));
+            graphPlayer.setFrameList(algorithm.process(new Graph(getGraphOrigin())));
         }
     }
 
