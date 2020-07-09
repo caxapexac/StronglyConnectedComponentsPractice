@@ -37,6 +37,12 @@ public final class Edge {
         target = temp;
     }
 
+    public String getDescription() {
+        String highlight = highlighted ? "подсвечено" : "не подсвечено";
+        return "Ребро с id " + id + ". Из вершины " + source +
+                " в вершину " + target + ". Сейчас " + highlight;
+    }
+
     @SuppressWarnings("MethodDoesntCallSuperMethod")
     @Override
     public Edge clone() {

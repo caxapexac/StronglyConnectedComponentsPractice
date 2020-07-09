@@ -80,5 +80,10 @@ public final class Node {
         return new Node(this);
     }
 
-
+    public String getDescription() {
+        String componentIdString = (strongComponentId != -1) ? Integer.toString(strongComponentId) : "еще на найден";
+        return "Вершина " + id + " Имя: " + name +
+                " ID компоненты: " + componentIdString +
+                " Позиция на экране: x = " + getX() + " | y = " + getY();
+    }
 }

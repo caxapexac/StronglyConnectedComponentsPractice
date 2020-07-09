@@ -24,7 +24,7 @@
         </properties>
         <border type="none"/>
         <children>
-          <scrollpane id="1c409">
+          <scrollpane id="1c409" binding="scrollPane">
             <constraints/>
             <properties/>
             <border type="none"/>

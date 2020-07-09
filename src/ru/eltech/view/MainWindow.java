@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -19,6 +20,7 @@ public final class MainWindow extends JFrame {
     private JLabel loggerLabel;
     private GraphEditor graphEditor;
     private GraphPlayerToolBar graphPlayerToolBar;
+    private JScrollPane scrollPane;
 
     private Graph graphOrigin;
     private GraphPlayer graphPlayer;
@@ -209,13 +211,21 @@ public final class MainWindow extends JFrame {
     }
 
     public void showNodesList() {
-        JOptionPane.showMessageDialog(this, getGraphOrigin().getNodesCount(), "TODO", JOptionPane.INFORMATION_MESSAGE);
-        // TODO
+        Graph curGraph = graphPlayer.getFrameList().get(graphPlayer.getCurrentFrame());
+        String msg = "";
+        for (Node node : curGraph.getNodes()) {
+            msg += node.getDescription() + "\n";
+        }
+        JOptionPane.showMessageDialog(this, msg, "Список вершин", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public void showEdgesList() {
-        JOptionPane.showMessageDialog(this, getGraphOrigin().getEdgesCount(), "TODO", JOptionPane.INFORMATION_MESSAGE);
-        // TODO
+        Graph curGraph = graphPlayer.getFrameList().get(graphPlayer.getCurrentFrame());
+        String msg = "";
+        for (Edge edge : curGraph.getEdges()) {
+            msg += edge.getDescription() + "\n";
+        }
+        JOptionPane.showMessageDialog(this, msg, "Список ребер", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public void showInstruction() {
@@ -279,13 +289,13 @@ public final class MainWindow extends JFrame {
         toolBar1.setMinimumSize(new Dimension(64, 22));
         toolBar1.setPreferredSize(new Dimension(256, 22));
         content.add(toolBar1, BorderLayout.EAST);
-        final JScrollPane scrollPane1 = new JScrollPane();
-        toolBar1.add(scrollPane1);
+        scrollPane = new JScrollPane();
+        toolBar1.add(scrollPane);
         loggerLabel = new JLabel();
         loggerLabel.setText("Log:\n1\n2");
         loggerLabel.setVerticalAlignment(1);
         loggerLabel.setVerticalTextPosition(1);
-        scrollPane1.setViewportView(loggerLabel);
+        scrollPane.setViewportView(loggerLabel);
         graphPlayerToolBar = new GraphPlayerToolBar();
         graphPlayerToolBar.setMaximumSize(new Dimension(10000, 10000));
         graphPlayerToolBar.setMinimumSize(new Dimension(10, 10));
