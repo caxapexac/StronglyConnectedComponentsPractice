@@ -23,7 +23,7 @@ public final class MainWindow extends JFrame {
     private Graph graphOrigin;
     private GraphPlayer graphPlayer;
 
-    private final Algorithm algorithm = new KosarajuAlgorithm();
+    private KosarajuAlgorithm algorithm = new KosarajuAlgorithm();
 
     private final String AUTOSAVE_FILE = "autosave.graph";
 
@@ -93,6 +93,20 @@ public final class MainWindow extends JFrame {
         graphOrigin = graph;
         graphEditor.setGraphCopy(graph);
         graphEditor.isReadOnly = false;
+    }
+
+    public void setImmediateReverse(boolean immediateReverse) {
+        algorithm.setImmediateReverse(immediateReverse);
+        switch (graphPlayer.getState()) {
+            case Play:
+                log.warning("Попытка изменения анимации во время проигрывания");
+                break;
+            case Pause:
+                log.warning("Изменение анимации на паузе не предусмотрено");
+            case Stop:
+                graphPlayer.setFrameList(algorithm.process(new Graph(getGraphOrigin())));
+                break;
+        }
     }
 
     // region LIFECYCLE

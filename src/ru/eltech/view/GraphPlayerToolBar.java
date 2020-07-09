@@ -18,6 +18,7 @@ public final class GraphPlayerToolBar extends JToolBar implements ActionListener
     private MainWindow parent;
 
     private final JPanel upperPanel = new JPanel();
+    private final JCheckBox toolBarSetReverseCheckBox = new JCheckBox("Проводить инвертирование графа мгновенно", true);
     private final JButton toolBarAutoButton = new JButton(new ImageIcon(getClass().getResource("/resources/icons/repeat-24px.png")));
     private final JButton toolBarPlayButton = new JButton(new ImageIcon(getClass().getResource("/resources/icons/play_arrow-24px.png")));
     private final JButton toolBarPauseButton = new JButton(new ImageIcon(getClass().getResource("/resources/icons/pause-24px.png")));
@@ -32,6 +33,7 @@ public final class GraphPlayerToolBar extends JToolBar implements ActionListener
     private final JProgressBar toolBarProgressBar = new JProgressBar(1, 100);
 
     public GraphPlayerToolBar() {
+        toolBarSetReverseCheckBox.addActionListener(this);
         toolBarAutoButton.addActionListener(this);
         toolBarPlayButton.addActionListener(this);
         toolBarPlayButton.setMnemonic('Q');
@@ -53,6 +55,7 @@ public final class GraphPlayerToolBar extends JToolBar implements ActionListener
         setOrientation(SwingConstants.VERTICAL);
         add(upperPanel);
         //upperPanel.add(toolBarAutoButton);
+        upperPanel.add(toolBarSetReverseCheckBox);
         upperPanel.add(toolBarPlayButton);
         upperPanel.add(toolBarPauseButton);
         upperPanel.add(toolBarStepBackwardButton);
@@ -95,6 +98,7 @@ public final class GraphPlayerToolBar extends JToolBar implements ActionListener
             //startVisualizing();
         } else if (eSource == toolBarPlayButton) {
             //if (graphPlayer.getState() == GraphPlayer.State.Empty) startVisualizing();
+            toolBarSetReverseCheckBox.setEnabled(false);
             graphPlayer.setState(Play);
         } else if (eSource == toolBarPauseButton) {
             graphPlayer.setState(Pause);
@@ -104,7 +108,13 @@ public final class GraphPlayerToolBar extends JToolBar implements ActionListener
             graphPlayer.stepForward();
         } else if (eSource == toolBarStopButton) {
             if (graphPlayer.getState() == Stop) parent.clearLog();
-            else graphPlayer.setState(Stop);
+            else {
+                toolBarSetReverseCheckBox.setEnabled(true);
+                graphPlayer.setState(Stop);
+            }
+        } else if (eSource == toolBarSetReverseCheckBox) {
+            JCheckBox currentCheck = (JCheckBox) eSource;
+            parent.setImmediateReverse(currentCheck.isSelected());
         }
     }
 
@@ -122,6 +132,7 @@ public final class GraphPlayerToolBar extends JToolBar implements ActionListener
     // region FROM PLAYER TO TOOLBAR
 
     public void playerChanged(GraphPlayer graphPlayer) {
+        toolBarSetReverseCheckBox.setVisible(true);
         toolBarPlayButton.setVisible(graphPlayer.getState() != Play);
         toolBarPauseButton.setVisible(graphPlayer.getState() == Play);
         toolBarStepBackwardButton.setEnabled(graphPlayer.getState() != Stop);
