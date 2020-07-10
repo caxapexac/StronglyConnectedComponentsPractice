@@ -29,7 +29,7 @@ public final class LoggerTextAreaHandler extends Handler {
         StringBuilder content = new StringBuilder();
         //content.append("<html><body style=\"text-align: justify; text-justify: inter-word;\">Log:<br>");
         content.append("<html><body>Log:<br>");
-        for (String message: messages) {
+        for (String message : messages) {
             content.append(message);
             if (!message.trim().isEmpty()) content.append("<br>");
         }
@@ -37,7 +37,11 @@ public final class LoggerTextAreaHandler extends Handler {
         textPane.setText(content.toString());
         // Хак для того, чтобы скроллбар оставался строго внизу
         if (!scrollPane.getVerticalScrollBar().getValueIsAdjusting()) SwingUtilities.invokeLater(() -> {
-            scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
+            try {
+                scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
     }
 
@@ -48,7 +52,7 @@ public final class LoggerTextAreaHandler extends Handler {
 
     @Override
     public void close() throws SecurityException {
-         clear();
+        clear();
     }
 
     public void clear() {

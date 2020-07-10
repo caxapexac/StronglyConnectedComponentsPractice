@@ -59,6 +59,8 @@ public final class MainWindow extends JFrame {
                     serializeGraph(new File(AUTOSAVE_FILE), true);
                 } else if (reply == JOptionPane.CANCEL_OPTION) {
                     return;
+                } else if (reply == JOptionPane.CLOSED_OPTION) {
+                    return;
                 }
                 windowClosed(event);
             }

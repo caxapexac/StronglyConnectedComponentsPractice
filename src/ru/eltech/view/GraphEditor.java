@@ -26,23 +26,24 @@ public final class GraphEditor extends GraphVisualizer {
      */
     private static final BasicStroke CONNECTING_STROKE = new BasicStroke(6, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 10, new float[]{5, 10}, 0);
 
-    public Dimension areaSize;
     public int lastCreatedNodeRadius = 0;
     public boolean isReadOnly = false;
     public boolean isModified = false;
     private final Point draggingLast = new Point();
+    private final Point draggingLastCanvas = new Point();
     private final Point connectingLast = new Point();
     private Node draggingNode;
     private Node selectedNode;
     private Edge draggingEdge;
     private Edge selectedEdge;
     private Node connectingSourceNode;
+    private boolean draggingGraph = false;
 
     public GraphEditor() {
         addMouseListener(new GraphEditorMouseListener());
         addMouseMotionListener(new GraphEditorMouseMotionListener());
+        addMouseWheelListener(new GraphEditorMouseWheelListener());
         addKeyListener(new GraphEditorKeyListener());
-        areaSize = new Dimension(0, 0);
     }
 
     @Override
@@ -52,6 +53,7 @@ public final class GraphEditor extends GraphVisualizer {
         draggingEdge = null;
         selectedEdge = null;
         connectingSourceNode = null;
+        draggingGraph = false;
         super.setGraphCopy(renderGraph);
         isModified = false;
     }
@@ -70,6 +72,10 @@ public final class GraphEditor extends GraphVisualizer {
         return connectingSourceNode != null;
     }
 
+    public boolean isMoving() {
+        return draggingGraph;
+    }
+
     /**
      * Выделяет ноду или дугу, нода в приоритете
      *
@@ -77,6 +83,7 @@ public final class GraphEditor extends GraphVisualizer {
      */
     @SuppressWarnings("UnusedReturnValue")
     public boolean select(int x, int y) {
+        if (isReadOnly) return false;
         if (innerSelectNode(x, y)) {
             selectedEdge = null;
             repaint();
@@ -101,22 +108,36 @@ public final class GraphEditor extends GraphVisualizer {
     }
 
     /**
+     * Масштабирует визуализацию графа
+     */
+    public void zoom(int x, int y, int change) {
+        scale.translate(change, change);
+        repaint();
+        // TODO relative scale
+    }
+
+    /**
      * Инициирует перемещение выделенного объекта
      */
-    public void startDrag(int x, int y) {
+    public void startDrag(int canvasX, int canvasY, int x, int y) {
         draggingLast.move(x, y);
+        draggingLastCanvas.move(canvasX, canvasY);
         draggingNode = selectedNode;
         draggingEdge = selectedEdge;
+        if (isReadOnly || draggingNode == null && draggingEdge == null) draggingGraph = true;
     }
 
     /**
      * Перемещает выделенный объект, нода в приоритете
      */
-    public void drag(int x, int y) {
+    public void drag(int canvasX, int canvasY, int x, int y) {
         int mouseDX = x - draggingLast.x;
         int mouseDY = y - draggingLast.y;
 
-        if (draggingNode != null) {
+        if (draggingGraph || isReadOnly) {
+            offset.translate(canvasX - draggingLastCanvas.x, canvasY - draggingLastCanvas.y);
+            repaint();
+        } else if (draggingNode != null) {
             draggingNode.getPosition().translate(mouseDX, mouseDY);
             repaint();
         } else if (draggingEdge != null) {
@@ -125,26 +146,26 @@ public final class GraphEditor extends GraphVisualizer {
             fromNode.getPosition().translate(mouseDX, mouseDY);
             toNode.getPosition().translate(mouseDX, mouseDY);
             repaint();
-        } else {
-            // Drag screen TODO (need additional fix)
         }
 
+        draggingLastCanvas.move(canvasX, canvasY);
         draggingLast.move(x, y);
     }
 
     /**
      * Завершает процесс перемещения объекта
      */
-    public void endDrag(int x, int y) {
-        drag(x, y);
+    public void endDrag(int canvasX, int canvasY, int x, int y) {
         draggingNode = null;
         draggingEdge = null;
+        draggingGraph = false;
     }
 
     /**
      * Начало создания дуги. От ноды под координаитой x,y до координат мыши
      */
     public void startConnecting(int x, int y) {
+        if (isReadOnly) return;
         connectingSourceNode = innerFindNode(x, y);
         connectingLast.move(x, y);
     }
@@ -153,7 +174,7 @@ public final class GraphEditor extends GraphVisualizer {
      * Обновляет позицию создаваемой дуги, если она существует
      */
     public void connecting(int x, int y) {
-        if (connectingSourceNode == null) return;
+        if (connectingSourceNode == null || isReadOnly) return;
         connectingLast.move(x, y);
         repaint();
     }
@@ -167,7 +188,7 @@ public final class GraphEditor extends GraphVisualizer {
      * @param willDestroyClone будет ли удаляться дуга, если происходит попытка создать совпадающую с ней дугу
      */
     public void endConnecting(int x, int y, boolean willCreateNode, boolean willDestroyClone) {
-        if (connectingSourceNode == null) return;
+        if (connectingSourceNode == null || isReadOnly) return;
         Node node = innerFindNode(x, y);
         if (node != connectingSourceNode) {
             if (node != null) {
@@ -189,6 +210,7 @@ public final class GraphEditor extends GraphVisualizer {
      * Создаёт ноду на координатах x,y
      */
     public void createNode(int x, int y) {
+        if (isReadOnly) return;
         graph.createNode(x, y);
         repaint();
     }
@@ -197,68 +219,9 @@ public final class GraphEditor extends GraphVisualizer {
      * Удаляет выделенный объект
      */
     public void destroySelected() {
+        if (isReadOnly) return;
         if (innerDestroySelectedNode() | innerDestroySelectedEdge()) repaint();
     }
-
-    /**
-     * @apiNote Прокручивает поле для рисования, вызывается при создании/окончании перетаскивания
-     * ноды близко к нижнему/правому краю экрана
-     * @implNote Трогать на свой страх и риск
-     */
-    public void scrollAreaAroundPoint(int x, int y, int howMuchToScroll) {
-        boolean changed = false;
-        int updateX = x - this.lastCreatedNodeRadius;
-        int updateY = y - this.lastCreatedNodeRadius;
-        if (updateX < 0) updateX = 0;
-        if (updateY < 0) updateY = 0;
-
-        Rectangle rect = new Rectangle(updateX, updateY,
-                this.lastCreatedNodeRadius*2,
-                this.lastCreatedNodeRadius*2);
-        this.scrollRectToVisible(rect);
-
-        int thisWidth = updateX + this.lastCreatedNodeRadius + howMuchToScroll;
-        if (thisWidth > this.areaSize.width) {
-            this.areaSize.width = thisWidth;
-            changed = true;
-        }
-
-        int thisHeight = updateY + this.lastCreatedNodeRadius + howMuchToScroll;
-        if (thisHeight > this.areaSize.height) {
-            this.areaSize.height = thisHeight;
-            changed = true;
-        }
-
-        if (changed) {
-            //Update client's preferred size because
-            //the area taken up by the graphics has
-            //gotten larger or smaller (if cleared).
-            this.setPreferredSize(this.areaSize);
-
-            //Let the scroll pane know to update itself
-            //and its scrollbars.
-            this.revalidate();
-        }
-    }
-
-    public void scrollRight(int howMuch){
-//        scrollRectToVisible(new Rectangle(getWidth(), 0, howMuch, howMuch));
-//        areaSize.width += howMuch;
-//        setPreferredSize(this.areaSize);
-//        revalidate();
-//        repaint();
-        scrollAreaAroundPoint(getWidth() - 1, 1, howMuch);
-    }
-
-    public void scrollDown(int howMuch){
-//        scrollRectToVisible(new Rectangle(0, getHeight(), howMuch, howMuch));
-//        areaSize.height += howMuch;
-//        setPreferredSize(this.areaSize);
-//        revalidate();
-//        repaint();
-        scrollAreaAroundPoint(1, getHeight() - 1, howMuch);
-    }
-
 
     private boolean innerDestroySelectedNode() {
         if (selectedNode == null) return false;
@@ -349,10 +312,11 @@ public final class GraphEditor extends GraphVisualizer {
         if (connectingSourceNode != null) {
             g2d.setColor(Color.GREEN);
             g2d.setStroke(CONNECTING_STROKE);
-            g2d.drawLine(connectingSourceNode.getPosition().x, connectingSourceNode.getPosition().y, connectingLast.x, connectingLast.y);
+            Point position = graphToCanvasSpace(connectingSourceNode.getPosition().x, connectingSourceNode.getPosition().y);
+            g2d.drawLine(position.x, position.y, connectingLast.x, connectingLast.y);
         }
         if (isModified) {
-            g2d.drawString("*", 20, 20);
+            //g2d.drawString("*", 20, 20);
         }
     }
 
@@ -430,61 +394,72 @@ public final class GraphEditor extends GraphVisualizer {
             FontMetrics fm = g.getFontMetrics();
             int tx = node.getPosition().x - fm.stringWidth(node.getName()) / 2;
             int ty = node.getPosition().y + fm.getHeight() / 2 + fm.getAscent();
-            g.drawString(Integer.toString(node.timeOut), tx, ty);
+            Point position = graphToCanvasSpace(tx, ty);
+            g.drawString(Integer.toString(node.timeOut), position.x, position.y);
         }
     }
 
     //region ACTIONS POPUP
 
     public void destroyEdge(Integer id) {
+        if (isReadOnly) return;
         Edge edge = graph.getEdge(id);
         if (edge != null) graph.destroyEdge(edge);
         repaint();
     }
 
     public void changeEdgeStroke(Integer id) {
+        if (isReadOnly) return;
         //Object[] radiusValues = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         //int radius = (Integer) JOptionPane.showInputDialog(this, "Введите толщину", "Модификация", JOptionPane.PLAIN_MESSAGE, null, radiusValues, radiusValues[radiusValues.length / 2]);
         // TODO
     }
 
     public void changeEdgeColor(Integer id) {
+        if (isReadOnly) return;
         // Color color = JColorChooser.showDialog(this, "Модификация", Color.BLACK);
         // TODO
     }
 
     public void createNewNode(int x, int y) {
+        if (isReadOnly) return;
         graph.createNode(x, y);
         repaint();
     }
 
     public void clearGraph() {
+        if (isReadOnly) return;
         graph.clear();
         repaint();
     }
 
     public void removeNode(Integer id) {
+        if (isReadOnly) return;
         Node node = graph.getNode(id);
         if (node != null) graph.destroyNode(node);
         repaint();
     }
 
     public void initializeAddEdge(Integer id) {
+        if (isReadOnly) return;
         // TODO
     }
 
     public void changeNodeRadius(Integer id) {
+        if (isReadOnly) return;
         //Object[] radiusValues = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         //int radius = (Integer) JOptionPane.showInputDialog(this, "Введите радиус", "Модификация", JOptionPane.PLAIN_MESSAGE, null, radiusValues, radiusValues[radiusValues.length / 2]);
         // TODO
     }
 
     public void changeNodeColor(Integer id) {
+        if (isReadOnly) return;
         // Color color = JColorChooser.showDialog(this, "Модификация", Color.BLACK);
         // TODO
     }
 
     public void changeNodeText(Integer id) {
+        if (isReadOnly) return;
         //String name = JOptionPane.showInputDialog(this, "Введите новое имя", "Модификация", JOptionPane.QUESTION_MESSAGE);
         // TODO
     }
@@ -494,18 +469,19 @@ public final class GraphEditor extends GraphVisualizer {
     //region ACTIONS KEYSTROKE
 
     public void moveGraphStep(int x, int y) {
-        drag(x, y);
-        // TODO?
+        offset.translate(x, y);
+        repaint();
     }
 
     public void setColor(Color color) {
+        if (isReadOnly) return;
         // TODO
     }
 
     public void changeSize(int delta) {
+        if (isReadOnly) return;
         // TODO?
     }
 
     //endregion
 }
-

@@ -40,6 +40,8 @@ public class GraphVisualizer extends JPanel {
      */
     protected static final Font fontAdditional = new Font(Font.DIALOG, Font.ITALIC, 12);
 
+    protected Point offset = new Point();
+    protected Point scale = new Point(1, 1);
     protected Graph graph = new Graph();
 
     /**
@@ -59,6 +61,16 @@ public class GraphVisualizer extends JPanel {
         return new Graph(graph);
     }
 
+    public Point canvasToGraphSpace(int x, int y) {
+        //return new Point((int) (x - offset.x * Math.pow(2, scale.x)), (int) (y - offset.y * Math.pow(2, scale.y)));
+        return new Point(x - offset.x, y - offset.y);
+    }
+
+    public Point graphToCanvasSpace(int x, int y) {
+        //return new Point((int) (x + offset.x * Math.pow(2, scale.x)), (int) (y + offset.y * Math.pow(2, scale.y)));
+        return new Point(x + offset.x, y + offset.y);
+    }
+
     /**
      * Отрисовка графа через {@link Graphics2D}
      */
@@ -71,12 +83,26 @@ public class GraphVisualizer extends JPanel {
         g2d.setColor(UIManager.getColor("Panel.background"));
         //g2d.setColor(new Color(245, 245, 245));
         g2d.fillRect(0, 0, getWidth(), getHeight());
+        displayMap(g2d);
         for (Edge edge : graph.getEdges()) {
             displayEdge(g2d, edge);
         }
         for (Node node : graph.getNodes()) {
             displayNode(g2d, node);
         }
+    }
+
+    /**
+     * TODO отрисовка миникарты
+     */
+    protected void displayMap(Graphics2D g) {
+        g.setColor(UIManager.getColor("Panel.foreground"));
+        g.fillRect(0, 0, 200, 200);
+        g.setColor(UIManager.getColor("Panel.background"));
+        int viewX = -offset.x / 25;
+        int viewY = -offset.y / 25;
+        g.drawRect(viewX, viewY, getWidth() / 25, getHeight() / 25);
+
     }
 
     /**
@@ -115,11 +141,16 @@ public class GraphVisualizer extends JPanel {
                 int leftY = (int) Math.round(endY + vx * ARROW_WIDTH - vy * ARROW_LENGTH);
                 int rightX = (int) Math.round(endX + vy * ARROW_WIDTH - vx * ARROW_LENGTH);
                 int rightY = (int) Math.round(endY - vx * ARROW_WIDTH - vy * ARROW_LENGTH);
+                Point start = graphToCanvasSpace(startX, startY);
+                Point end = graphToCanvasSpace(endX, endY);
+                Point left = graphToCanvasSpace(leftX, leftY);
+                Point right = graphToCanvasSpace(rightX, rightY);
+
                 decorateEdgeBody(g, edge);
-                g.drawLine(startX, startY, endX, endY); // Тело дуги
+                g.drawLine(start.x, start.y, end.x, end.y); // Тело дуги
                 decorateEdgeArrow(g, edge);
-                g.drawLine(leftX, leftY, endX, endY); // Левое крыло стрелки
-                g.drawLine(endX, endY, rightX, rightY); // Правое крыло стрелки
+                g.drawLine(left.x, left.y, end.x, end.y); // Левое крыло стрелки
+                g.drawLine(end.x, end.y, right.x, right.y); // Правое крыло стрелки
             } else {
                 int endX = (int) Math.round((target.getPosition().x + source.getPosition().x) * 0.5d);
                 int endY = (int) Math.round((target.getPosition().y + source.getPosition().y) * 0.5d);
@@ -127,9 +158,13 @@ public class GraphVisualizer extends JPanel {
                 int leftY = (int) Math.round(endY + vx * ARROW_WIDTH - vy * ARROW_LENGTH);
                 int rightX = (int) Math.round(endX + vy * ARROW_WIDTH - vx * ARROW_LENGTH);
                 int rightY = (int) Math.round(endY - vx * ARROW_WIDTH - vy * ARROW_LENGTH);
+                Point end = graphToCanvasSpace(endX, endY);
+                Point left = graphToCanvasSpace(leftX, leftY);
+                Point right = graphToCanvasSpace(rightX, rightY);
+
                 decorateEdgeArrow(g, edge);
-                g.drawLine(leftX, leftY, endX, endY); // Левое крыло стрелки
-                g.drawLine(endX, endY, rightX, rightY); // Правое крыло стрелки
+                g.drawLine(left.x, left.y, end.x, end.y); // Левое крыло стрелки
+                g.drawLine(end.x, end.y, right.x, right.y); // Правое крыло стрелки
             }
         }
     }
@@ -167,6 +202,8 @@ public class GraphVisualizer extends JPanel {
 
         decorateNodeInner(g, node);
         //g.fillOval(node.getPosition().x - radius, node.getPosition().y - radius, diameter, diameter);
+        //TODO
+        g.fillOval(node.getPosition().x / 25, node.getPosition().y / 25, 3, 3);
         g.fillPolygon(hex);
         decorateNodeOuter(g, node);
         //g.drawOval(node.getPosition().x - radius, node.getPosition().y - radius, diameter, diameter);
@@ -175,7 +212,8 @@ public class GraphVisualizer extends JPanel {
         FontMetrics fm = g.getFontMetrics();
         int tx = node.getPosition().x - fm.stringWidth(node.getName()) / 2;
         int ty = node.getPosition().y - fm.getHeight() / 2 + fm.getAscent();
-        g.drawString(node.getName(), tx, ty);
+        Point tPosition = graphToCanvasSpace(tx, ty);
+        g.drawString(node.getName(), tPosition.x, tPosition.y);
     }
 
     private Polygon createHexagon(Point position, int radius) {
@@ -183,7 +221,8 @@ public class GraphVisualizer extends JPanel {
         for (int i = 0; i < 6; i++) {
             int x = (int) (position.x + radius * Math.cos(i * 2 * Math.PI / 6D));
             int y = (int) (position.y + radius * Math.sin(i * 2 * Math.PI / 6D));
-            polygon.addPoint(x, y);
+            Point pos = graphToCanvasSpace(x, y);
+            polygon.addPoint(pos.x, pos.y);
         }
         return polygon;
     }
