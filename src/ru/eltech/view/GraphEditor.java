@@ -447,14 +447,16 @@ public final class GraphEditor extends GraphVisualizer {
 
     public void changeNodeRadius(Integer id) {
         if (isReadOnly) return;
-        //Object[] radiusValues = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-        //int radius = (Integer) JOptionPane.showInputDialog(this, "Введите радиус", "Модификация", JOptionPane.PLAIN_MESSAGE, null, radiusValues, radiusValues[radiusValues.length / 2]);
-        // TODO
+        Object[] radiusValues = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+        int radius = (Integer) JOptionPane.showInputDialog(this, "Введите радиус", "Модификация", JOptionPane.PLAIN_MESSAGE, null, radiusValues, radiusValues[radiusValues.length / 2]);
+        graph.getNode(id).setRadius(32+3*(radius-5));
+        repaint();
     }
 
     public void changeNodeColor(Integer id) {
         if (isReadOnly) return;
-        // Color color = JColorChooser.showDialog(this, "Модификация", Color.BLACK);
+        //Color color = JColorChooser.showDialog(this, "Модификация", Color.BLACK);
+
         // TODO
     }
 
@@ -463,7 +465,6 @@ public final class GraphEditor extends GraphVisualizer {
         String name = JOptionPane.showInputDialog(this, "Введите новое имя", "Модификация", JOptionPane.QUESTION_MESSAGE);
         graph.getNode(id).setName(name);
         repaint();
-        // TODO
     }
 
     //endregion
