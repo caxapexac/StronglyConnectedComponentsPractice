@@ -410,9 +410,10 @@ public final class GraphEditor extends GraphVisualizer {
 
     public void changeEdgeStroke(Integer id) {
         if (isReadOnly) return;
-        //Object[] radiusValues = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-        //int radius = (Integer) JOptionPane.showInputDialog(this, "Введите толщину", "Модификация", JOptionPane.PLAIN_MESSAGE, null, radiusValues, radiusValues[radiusValues.length / 2]);
-        // TODO
+        Object[] radiusValues = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+        int radius = (Integer) JOptionPane.showInputDialog(this, "Введите толщину", "Модификация", JOptionPane.PLAIN_MESSAGE, null, radiusValues, radiusValues[radiusValues.length / 2]);
+        graph.getEdge(id).setStroke(radius);
+        repaint();
     }
 
     public void changeEdgeColor(Integer id) {

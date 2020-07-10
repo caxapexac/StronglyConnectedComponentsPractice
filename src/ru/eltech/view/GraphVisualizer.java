@@ -114,7 +114,11 @@ public class GraphVisualizer extends JPanel {
         } else {
             g.setColor(Color.BLACK);
         }
-        g.setStroke(DEFAULT_STROKE);
+        if(edge.getStroke() != 0){
+            g.setStroke(new BasicStroke(DEFAULT_STROKE.getLineWidth()+(edge.getStroke()-5)/2));
+        }else {
+            g.setStroke(DEFAULT_STROKE);
+        }
     }
 
     /**
@@ -126,7 +130,11 @@ public class GraphVisualizer extends JPanel {
         } else {
             g.setColor(Color.BLACK);
         }
-        g.setStroke(DEFAULT_STROKE);
+        if(edge.getStroke() != 0){
+            g.setStroke(new BasicStroke(DEFAULT_STROKE.getLineWidth()+(edge.getStroke()-5)/2));
+        }else {
+            g.setStroke(DEFAULT_STROKE);
+        }
     }
 
     private void displayEdge(Graphics2D g, Edge edge) {
