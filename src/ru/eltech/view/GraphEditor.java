@@ -417,8 +417,9 @@ public final class GraphEditor extends GraphVisualizer {
 
     public void changeEdgeColor(Integer id) {
         if (isReadOnly) return;
-        //Color color = JColorChooser.showDialog(this, "Модификация", Color.BLACK);
-        // TODO
+        Color color = JColorChooser.showDialog(this, "Модификация", Color.BLACK);
+        graph.getEdge(id).setColor(color);
+        repaint();
     }
 
     public void createNewNode(int x, int y) {

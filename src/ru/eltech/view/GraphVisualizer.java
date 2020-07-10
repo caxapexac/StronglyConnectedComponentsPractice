@@ -109,7 +109,11 @@ public class GraphVisualizer extends JPanel {
      * Позволяет настроить стиль тела дуги в {@link GraphEditor}
      */
     protected void decorateEdgeBody(Graphics2D g, Edge edge) {
-        g.setColor(Color.BLACK);
+        if(edge.getColor() != null){
+            g.setColor(edge.getColor());
+        } else {
+            g.setColor(Color.BLACK);
+        }
         g.setStroke(DEFAULT_STROKE);
     }
 
@@ -117,7 +121,11 @@ public class GraphVisualizer extends JPanel {
      * Позволяет настроить стиль крыльев дуги в {@link GraphEditor}
      */
     protected void decorateEdgeArrow(Graphics2D g, Edge edge) {
-        g.setColor(Color.BLACK);
+        if(edge.getColor() != null){
+            g.setColor(edge.getColor());
+        } else {
+            g.setColor(Color.BLACK);
+        }
         g.setStroke(DEFAULT_STROKE);
     }
 
