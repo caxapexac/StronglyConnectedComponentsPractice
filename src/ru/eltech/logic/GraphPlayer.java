@@ -15,6 +15,9 @@ public final class GraphPlayer {
     private State state = State.Stop;
     private volatile int currentFrame = 0;
     private int delay = 300;
+    public boolean sliderChanged = false;
+    public boolean stepForwardInPause = false;
+    public boolean stepBackwardInPause = false;
 
     private final GraphPlayerToolBar toolBar;
 
@@ -75,6 +78,7 @@ public final class GraphPlayer {
 
     public void setDelay(int delay) {
         this.delay = delay;
+        sliderChanged = true;
         toolBar.playerChanged(this);
     }
 
@@ -92,6 +96,7 @@ public final class GraphPlayer {
             return false;
         }
         currentFrame++;
+        stepForwardInPause = true;
         toolBar.playerChanged(this);
         //MainWindow.log.info(String.valueOf(frameList.get(getCurrentFrame()).state));
         return true;
@@ -110,6 +115,7 @@ public final class GraphPlayer {
             return false;
         }
         currentFrame--;
+        stepBackwardInPause = true;
         toolBar.playerChanged(this);
         //MainWindow.log.info(String.valueOf(frameList.get(getCurrentFrame()).state));
         return true;

@@ -1,6 +1,7 @@
 package ru.eltech.view;
 
 import ru.eltech.logic.Algorithm;
+import ru.eltech.logic.Graph;
 import ru.eltech.logic.GraphPlayer;
 
 import javax.swing.*;
@@ -106,6 +107,7 @@ public final class GraphPlayerToolBar extends JToolBar implements ActionListener
             graphPlayer.setState(Play);
         } else if (eSource == toolBarPauseButton) {
             graphPlayer.setState(Pause);
+            toolBarSpeedSlider.setEnabled(true);
         } else if (eSource == toolBarStepBackwardButton) {
             graphPlayer.stepBackward();
         } else if (eSource == toolBarStepForwardButton) {
@@ -134,6 +136,11 @@ public final class GraphPlayerToolBar extends JToolBar implements ActionListener
     // region FROM PLAYER TO TOOLBAR
 
     public void playerChanged(GraphPlayer graphPlayer) {
+        if (graphPlayer.sliderChanged) {
+            graphPlayer.sliderChanged = false;
+            toolBarSpeedSlider.setValue(graphPlayer.getDelay());
+            return;
+        }
         toolBarSetReverseCheckBox.setVisible(true);
         toolBarPlayButton.setVisible(graphPlayer.getState() != Play);
         toolBarPauseButton.setVisible(graphPlayer.getState() == Play);
@@ -153,7 +160,15 @@ public final class GraphPlayerToolBar extends JToolBar implements ActionListener
             case Pause:
                 parent.playerPausing();
                 if (graphPlayer.getFrameList() != null) {
-                    parent.playerVisualizing(graphPlayer.getFrameList().get(graphPlayer.getCurrentFrame()));
+                    //костыль чтобы на паузе не дублировался лог
+                    Graph graph = graphPlayer.getFrameList().get(graphPlayer.getCurrentFrame());
+                    if (graphPlayer.stepBackwardInPause || graphPlayer.stepForwardInPause) {
+                        graphPlayer.stepForwardInPause = false;
+                        graphPlayer.stepBackwardInPause = false;
+                    } else {
+                        graph.state = "";
+                    }
+                    parent.playerVisualizing(graph);
                 }
                 break;
             case Stop:
