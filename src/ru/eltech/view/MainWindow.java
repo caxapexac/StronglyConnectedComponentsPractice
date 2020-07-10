@@ -1,5 +1,6 @@
 package ru.eltech.view;
 
+import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatGitHubIJTheme;
 import ru.eltech.logic.*;
 
 import javax.swing.*;
@@ -247,6 +248,12 @@ public final class MainWindow extends JFrame {
 
     public void clearLog() {
         loggerTextAreaHandler.clear();
+    }
+
+    public void changeTheme() {
+        FlatGitHubIJTheme.install();
+        SwingUtilities.updateComponentTreeUI(this);
+        pack();
     }
 
     //endregion

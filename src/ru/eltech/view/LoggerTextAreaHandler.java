@@ -36,8 +36,9 @@ public final class LoggerTextAreaHandler extends Handler {
         content.append("</body></html>");
         textPane.setText(content.toString());
         // Хак для того, чтобы скроллбар оставался строго внизу
-        JScrollBar scrollBar = scrollPane.getVerticalScrollBar();
-        if (!scrollBar.getValueIsAdjusting()) SwingUtilities.invokeLater(() -> scrollBar.setValue(scrollBar.getMaximum()));
+        if (!scrollPane.getVerticalScrollBar().getValueIsAdjusting()) SwingUtilities.invokeLater(() -> {
+            scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
+        });
     }
 
     @Override

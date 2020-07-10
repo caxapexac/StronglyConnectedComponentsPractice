@@ -15,7 +15,6 @@ import javax.swing.*;
 public final class Main {
     public static void main(String[] args) {
         FlatAtomOneDarkContrastIJTheme.install();
-        //FlatAtomOneDarkIJTheme.install();
         //FlatGitHubContrastIJTheme.install();
         //FlatGitHubIJTheme.install();
         //FlatDraculaIJTheme.install();
