@@ -47,7 +47,7 @@ public final class GraphPlayer {
                 timer.schedule(new PlayerTask(), delay);
                 break;
             case Pause:
-                MainWindow.log.info("Пауза анимации");
+                //MainWindow.log.info("Пауза анимации на шаге: <br>");
                 timer.cancel();
                 break;
             case Stop:
@@ -85,7 +85,8 @@ public final class GraphPlayer {
     public synchronized boolean stepForward() {
         if (frameList == null || state == State.Stop) return false;
         if (currentFrame >= frameList.count() - 1) {
-            MainWindow.log.warning("Конец анимации");
+            MainWindow.log.info("Конец анимации");
+            frameList.get(frameList.count() - 1).state = "";
             currentFrame = frameList.count() - 1;
             setState(State.Pause);
             return false;

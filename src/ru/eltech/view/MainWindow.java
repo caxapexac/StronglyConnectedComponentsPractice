@@ -16,6 +16,12 @@ import java.util.stream.Collectors;
 public final class MainWindow extends JFrame {
     public static Logger log = Logger.getLogger(MainWindow.class.getName());
 
+    private enum Themes {
+        DARK,
+        BRIGHT
+    }
+
+    private Themes currentTheme = Themes.DARK;
     private JPanel content;
     private JTextPane loggerPane;
     private GraphEditor graphEditor;
@@ -133,7 +139,7 @@ public final class MainWindow extends JFrame {
     public void playerVisualizing(Graph graph) {
         graphEditor.setGraphCopy(graph);
         if (graph.state != null)
-            this.log.info(graph.state);
+            log.info(graph.state);
     }
 
     public void setImmediateReverse(boolean immediateReverse) {
@@ -253,9 +259,51 @@ public final class MainWindow extends JFrame {
     }
 
     public void changeTheme() {
-        FlatGitHubIJTheme.install();
-        SwingUtilities.updateComponentTreeUI(this);
-        pack();
+//        FlatGitHubIJTheme.install();
+//        SwingUtilities.updateComponentTreeUI(this);
+//        pack();
+        switch (currentTheme) {
+            case DARK:
+                try {
+                    UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+                } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException e) {
+                    try {
+                        UIManager.setLookAndFeel("com.jtattoo.plaf.graphite.GraphiteLookAndFeel");
+                    } catch (ClassNotFoundException classNotFoundException) {
+                        classNotFoundException.printStackTrace();
+                    } catch (InstantiationException instantiationException) {
+                        instantiationException.printStackTrace();
+                    } catch (IllegalAccessException illegalAccessException) {
+                        illegalAccessException.printStackTrace();
+                    } catch (UnsupportedLookAndFeelException unsupportedLookAndFeelException) {
+                        unsupportedLookAndFeelException.printStackTrace();
+                    }
+                }
+                SwingUtilities.updateComponentTreeUI(this);
+                pack();
+                currentTheme = Themes.DARK;
+                break;
+            case BRIGHT:
+                try {
+                    UIManager.setLookAndFeel("com.jtattoo.plaf.graphite.GraphiteLookAndFeel");
+                } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException e) {
+                    try {
+                        UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+                    } catch (ClassNotFoundException classNotFoundException) {
+                        classNotFoundException.printStackTrace();
+                    } catch (InstantiationException instantiationException) {
+                        instantiationException.printStackTrace();
+                    } catch (IllegalAccessException illegalAccessException) {
+                        illegalAccessException.printStackTrace();
+                    } catch (UnsupportedLookAndFeelException unsupportedLookAndFeelException) {
+                        unsupportedLookAndFeelException.printStackTrace();
+                    }
+                }
+                SwingUtilities.updateComponentTreeUI(this);
+                pack();
+                currentTheme = Themes.BRIGHT;
+                break;
+        }
     }
 
     //endregion

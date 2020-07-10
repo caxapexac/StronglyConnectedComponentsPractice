@@ -35,7 +35,7 @@ public final class KosarajuAlgorithm implements Algorithm {
         timeOutList = new ArrayList<>();
         //возвращаемые фреймы
         frames = new FrameList();
-        frames.add(context, "Старт алгоритма");
+        frames.add(context, "");
 
         timer = 0;
         Collection<Node> nodes = context.getNodes();
@@ -52,11 +52,12 @@ public final class KosarajuAlgorithm implements Algorithm {
         }
 
         clearAll(context);
-        frames.add(context);
+        frames.add(context, "Снятие всех выделений, переход к следующему шагу.<br>");
 
         reverseGraph(context, immediateReverse);
 
         clearHighlightedEdges(context);
+        frames.add(context, "Снятие всех выделений, переход к следующему шагу.<br>");
 
         int currentComponentId = 0;
         for (Node currentNode : timeOutList) {
@@ -67,14 +68,20 @@ public final class KosarajuAlgorithm implements Algorithm {
         }
 
         clearAll(context);
-        frames.add(context);
+        frames.add(context, "Снятие всех выделений, переход к следующему шагу.<br>");
 
         reverseGraph(context, immediateReverse);
 
         clearHighlightedEdges(context);
-        frames.add(context);
+        frames.add(context, "Снятие всех выделений, завершение алгоритма.<br>" +
+                "Алгоритм закончен. " + frames.count() + " итераций");
 
-        MainWindow.log.info("Просчет алгоритма закончен. " + frames.count() + " итераций");
+        String components = "Найдены компоненты со следующими вершинами:<br>";
+        for (int i = 0; context.componentExists(i);i++){
+            components += context.getNodesInComponentById(i) + "<br>";
+        }
+        frames.add(context, components + "<br>");
+        //MainWindow.log.info("Просчет алгоритма закончен. " + frames.count() + " итераций");
         return frames;
     }
 
@@ -88,7 +95,7 @@ public final class KosarajuAlgorithm implements Algorithm {
         timer++;
 
         startNode.highlighted = true;
-        currentStep += "Подсчет времени выхода<br>Текущая вершина: " + startNode.getName() + "<br>";
+        currentStep += "<br>Подсчет времени выхода<br>Текущая вершина: " + startNode.getName() + "<br>";
         frames.add(graph, currentStep);//for animation
 
         Collection<Edge> edgeList = graph.getEdgesFromNode(startNode);
@@ -102,12 +109,11 @@ public final class KosarajuAlgorithm implements Algorithm {
             frames.add(graph, currentStep);
             currentStep = "";
 
-            if (!nextNode.visited) {
+            if (nextNode.visited) {
+                frames.add(graph, "Вершина " + nextNode.getName() + " уже посещена<br>");
+            } else {
                 currentStep += "Вершина " + nextNode.getName() + " не посещена,&#10;&#13; рекурсивно обходим ее<br>";
                 timeOut(nextNode, graph);
-                //MainWindow.log.info("added " + Integer.toString(timer));
-            } else {
-                currentStep += "Вершина " + nextNode.getName() + " уже посещена<br>";
             }
         }
         startNode.timeOut = timer;
@@ -129,7 +135,7 @@ public final class KosarajuAlgorithm implements Algorithm {
 
         if (inOneStep) {
             highlightAllEdges(graph);
-            frames.add(graph);
+            frames.add(graph, "Инвертирование всех ребер");
             for (Edge current : graph.getEdges()) {
                 current.invert();
             }
@@ -140,7 +146,9 @@ public final class KosarajuAlgorithm implements Algorithm {
         }
         for (Edge current : graph.getEdges()) {
             current.highlighted = true;
-            frames.add(graph);//for animation
+            String from = graph.getNode(current.getSource()).getName();
+            String to = graph.getNode(current.getTarget()).getName();
+            frames.add(graph, "Инвертирование ребра из " + from + " в " + to + "<br>");//for animation
             current.invert();
             frames.add(graph);
         }
@@ -157,22 +165,28 @@ public final class KosarajuAlgorithm implements Algorithm {
         node.strongComponentId = componentId;
         node.visited = true;
         node.highlighted = true;
-        frames.add(graph);
+        frames.add(graph,"Поиск компоненты сильной связности с id " + componentId);
 
         Collection<Edge> edgeList = graph.getEdgesFromNode(node);
         for (Edge currentEdge : edgeList) {
 
             currentEdge.highlighted = true;
-
-            frames.add(graph);
-
             Node nextNode = graph.getNode(currentEdge.getTarget());
+            frames.add(graph, "Переход в вершину " +
+                    graph.getNode(currentEdge.getTarget()).getName() + "<br>");
+
             if (nextNode.strongComponentId == -1) {
+                frames.add(graph, "Вершина " + nextNode.getName() + " еще не в компоненте"+
+                        ". Выполняется рекурсивный вызов функции поиска компоненты для вершины " +
+                        nextNode.getName() + "<br>");
                 findComponent(componentId, nextNode, graph);
+//                frames.add(graph, "Найдена компонента сильной связности с id "+nextNode.strongComponentId+
+//                        "<br>В нее входят вершины " + graph.getNodesInComponentById(nextNode.strongComponentId) + "<br>");
             } else if (nextNode.strongComponentId != node.strongComponentId) {
                 currentEdge.highlighted = false;
                 currentEdge.connectsStrongComponents = true;
-                frames.add(graph);
+                frames.add(graph,"Вершины " + node.getName() + " и " + nextNode.getName() +
+                        " в разных компонентах, выделяем ребро между ними.<br>");
             }
         }
     }

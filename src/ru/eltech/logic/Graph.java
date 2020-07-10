@@ -192,4 +192,24 @@ public final class Graph {
         }
         p.flush();
     }
+
+    public String getNodesInComponentById(int strongComponentId) {
+        String nodesStr = "| ";
+        for (Node node : getNodes()) {
+            if (node.strongComponentId == strongComponentId) {
+                nodesStr += node.getName() + " | ";
+            }
+        }
+        return nodesStr;
+    }
+
+    public boolean componentExists(int id) {
+        boolean res = false;
+        for (Node node : getNodes()) {
+            if (node.strongComponentId == id) {
+                res = true;
+            }
+        }
+        return res;
+    }
 }

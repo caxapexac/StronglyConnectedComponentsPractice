@@ -20,9 +20,24 @@ public final class Main {
         //FlatDraculaIJTheme.install();
         //FlatSolarizedDarkIJTheme.install();
         //FlatDarkPurpleIJTheme.install();
-        //UIManager.setLookAndFeel("com.jtattoo.plaf.graphite.GraphiteLookAndFeel");
         //UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName()); java metal style
         //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); windows style
+//        try {
+//            UIManager.setLookAndFeel("com.jtattoo.plaf.graphite.GraphiteLookAndFeel");
+//        } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException e) {
+//            try {
+//                UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+//            } catch (ClassNotFoundException classNotFoundException) {
+//                classNotFoundException.printStackTrace();
+//            } catch (InstantiationException instantiationException) {
+//                instantiationException.printStackTrace();
+//            } catch (IllegalAccessException illegalAccessException) {
+//                illegalAccessException.printStackTrace();
+//            } catch (UnsupportedLookAndFeelException unsupportedLookAndFeelException) {
+//                unsupportedLookAndFeelException.printStackTrace();
+//            }
+//        }
+
         MainWindow window = new MainWindow();
         window.setVisible(true);
     }

@@ -27,7 +27,7 @@ public final class GraphPlayerToolBar extends JToolBar implements ActionListener
     private final JButton toolBarStopButton = new JButton(new ImageIcon(getClass().getResource("/resources/icons/stop-24px.png")));
     private final Separator separator = new Separator();
     private final JLabel speedLabel = new JLabel("Delay: ");
-    private final JSlider toolBarSpeedSlider = new JSlider(1, 1000);
+    private final JSlider toolBarSpeedSlider = new JSlider(1, 1000, 500);
     private final JPanel bottomPanel = new JPanel();
     private final JLabel progressLabel = new JLabel("Progress: ");
     private final JProgressBar toolBarProgressBar = new JProgressBar(1, 100);
@@ -63,8 +63,8 @@ public final class GraphPlayerToolBar extends JToolBar implements ActionListener
         upperPanel.add(toolBarStopButton);
         upperPanel.add(separator);
         upperPanel.add(speedLabel);
+        toolBarSpeedSlider.setValue(500);
         upperPanel.add(toolBarSpeedSlider);
-        toolBarSpeedSlider.setValue(300);
         toolBarSpeedSlider.addChangeListener(this);
 
         add(bottomPanel);
@@ -102,6 +102,7 @@ public final class GraphPlayerToolBar extends JToolBar implements ActionListener
         } else if (eSource == toolBarPlayButton) {
             //if (graphPlayer.getState() == GraphPlayer.State.Empty) startVisualizing();
             toolBarSetReverseCheckBox.setEnabled(false);
+            toolBarSpeedSlider.setEnabled(false);
             graphPlayer.setState(Play);
         } else if (eSource == toolBarPauseButton) {
             graphPlayer.setState(Pause);
@@ -113,6 +114,7 @@ public final class GraphPlayerToolBar extends JToolBar implements ActionListener
             if (graphPlayer.getState() == Stop) parent.clearLog();
             else {
                 toolBarSetReverseCheckBox.setEnabled(true);
+                toolBarSpeedSlider.setEnabled(true);
                 graphPlayer.setState(Stop);
             }
         }
