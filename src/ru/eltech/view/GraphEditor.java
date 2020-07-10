@@ -352,7 +352,7 @@ public final class GraphEditor extends GraphVisualizer {
             g2d.drawLine(connectingSourceNode.getPosition().x, connectingSourceNode.getPosition().y, connectingLast.x, connectingLast.y);
         }
         if (isModified) {
-            g2d.drawString("*", 10, 10);
+            g2d.drawString("*", 20, 20);
         }
     }
 

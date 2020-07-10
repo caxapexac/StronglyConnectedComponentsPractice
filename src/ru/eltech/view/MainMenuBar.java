@@ -21,8 +21,8 @@ public final class MainMenuBar extends JMenuBar implements ActionListener {
     // TODO
 
     private final JMenu editMenu = new JMenu("Edit");
-    private final JMenuItem nodesMenuItem = new JMenuItem("nodesMenuItem...");
-    private final JMenuItem edgesMenuItem = new JMenuItem("edgesMenuItem...");
+    private final JMenuItem nodesMenuItem = new JMenuItem("Показать список нод...");
+    private final JMenuItem edgesMenuItem = new JMenuItem("Показать список дуг...");
     // TODO
 
     private final JMenu viewMenu = new JMenu("View");

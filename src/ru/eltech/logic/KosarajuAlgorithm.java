@@ -22,21 +22,6 @@ public final class KosarajuAlgorithm implements Algorithm {
         this.immediateReverse = immediateReverse;
     }
 
-    public KosarajuAlgorithm() {
-        //вершины по времени выхода в порядке возрастания
-        timeOutList = new ArrayList<Node>();
-        //возвращаемые фреймы
-        frames = new FrameList();
-    }
-//    public KosarajuAlgorithm(boolean immediatereverse) {
-//        //вершины по времени выхода в порядке возрастания
-//        timeOutList = new ArrayList<Node>();
-//        //возвращаемые фреймы
-//        frames = new FrameList();
-//        //поворот ребер за 1 шаг / много шагов
-//        this.immediatereverse = immediatereverse;
-//    }
-
     /**
      * @param context Граф, над которым требуется выполнить алгоритм
      * @return
@@ -46,7 +31,9 @@ public final class KosarajuAlgorithm implements Algorithm {
      */
     @Override
     public FrameList process(Graph context) {
+        //вершины по времени выхода в порядке возрастания
         timeOutList = new ArrayList<>();
+        //возвращаемые фреймы
         frames = new FrameList();
         frames.add(context, "Старт алгоритма");
 

@@ -94,7 +94,10 @@ public final class GraphPlayerToolBar extends JToolBar implements ActionListener
     public void actionPerformed(ActionEvent e) {
         GraphPlayer graphPlayer = parent.getGraphPlayer();
         Object eSource = e.getSource();
-        if (eSource == toolBarAutoButton) {
+        if (eSource == toolBarSetReverseCheckBox) {
+            JCheckBox currentCheck = (JCheckBox) eSource;
+            parent.setImmediateReverse(currentCheck.isSelected());
+        } else if (eSource == toolBarAutoButton) {
             //startVisualizing();
         } else if (eSource == toolBarPlayButton) {
             //if (graphPlayer.getState() == GraphPlayer.State.Empty) startVisualizing();
@@ -112,9 +115,6 @@ public final class GraphPlayerToolBar extends JToolBar implements ActionListener
                 toolBarSetReverseCheckBox.setEnabled(true);
                 graphPlayer.setState(Stop);
             }
-        } else if (eSource == toolBarSetReverseCheckBox) {
-            JCheckBox currentCheck = (JCheckBox) eSource;
-            parent.setImmediateReverse(currentCheck.isSelected());
         }
     }
 

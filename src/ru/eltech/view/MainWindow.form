@@ -26,13 +26,15 @@
         <children>
           <scrollpane id="1c409" binding="scrollPane">
             <constraints/>
-            <properties/>
+            <properties>
+              <horizontalScrollBarPolicy value="31"/>
+            </properties>
             <border type="none"/>
             <children>
               <component id="12a81" class="javax.swing.JLabel" binding="loggerLabel">
                 <constraints/>
                 <properties>
-                  <text value="Log:&#10;1&#10;2"/>
+                  <text value="Log:"/>
                   <verticalAlignment value="1"/>
                   <verticalTextPosition value="1"/>
                 </properties>

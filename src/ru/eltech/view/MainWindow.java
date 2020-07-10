@@ -26,7 +26,7 @@ public final class MainWindow extends JFrame {
     private Graph graphOrigin;
     private GraphPlayer graphPlayer;
 
-    private KosarajuAlgorithm algorithm = new KosarajuAlgorithm();
+    private final KosarajuAlgorithm algorithm = new KosarajuAlgorithm();
 
     private final String AUTOSAVE_FILE = "autosave.graph";
 
@@ -40,12 +40,11 @@ public final class MainWindow extends JFrame {
     private void initialize() {
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         setContentPane(content);
-        setMinimumSize(new Dimension(800, 600));
-        setSize(800, 600);
+        setMinimumSize(new Dimension(1024, 768));
         setResizable(true);
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
         setJMenuBar(new MainMenuBar(this));
+        //setExtendedState(JFrame.MAXIMIZED_BOTH);
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent event) {
@@ -66,7 +65,7 @@ public final class MainWindow extends JFrame {
         graphOrigin = new Graph();
         graphPlayer = new GraphPlayer(graphPlayerToolBar);
         graphPlayerToolBar.setParent(this);
-        log.addHandler(new LoggerTextAreaHandler(loggerLabel));
+        log.addHandler(new LoggerTextAreaHandler(scrollPane, loggerLabel));
         deserializeGraph(new File(AUTOSAVE_FILE), true);
         scrolling = new JScrollPane(graphEditor,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
@@ -104,20 +103,6 @@ public final class MainWindow extends JFrame {
         graphEditor.isReadOnly = false;
     }
 
-    public void setImmediateReverse(boolean immediateReverse) {
-        algorithm.setImmediateReverse(immediateReverse);
-        switch (graphPlayer.getState()) {
-            case Play:
-                log.warning("Попытка изменения анимации во время проигрывания");
-                break;
-            case Pause:
-                log.warning("Изменение анимации на паузе не предусмотрено");
-            case Stop:
-                graphPlayer.setFrameList(algorithm.process(new Graph(getGraphOrigin())));
-                break;
-        }
-    }
-
     // region LIFECYCLE
 
     public void playerPlaying() {
@@ -145,6 +130,20 @@ public final class MainWindow extends JFrame {
         graphEditor.setGraphCopy(graph);
         if (graph.state != null)
             this.log.info(graph.state);
+    }
+
+    public void setImmediateReverse(boolean immediateReverse) {
+        algorithm.setImmediateReverse(immediateReverse);
+        switch (graphPlayer.getState()) {
+            case Play:
+                log.warning("Попытка изменения анимации во время проигрывания");
+                break;
+            case Pause:
+                log.warning("Изменение анимации на паузе не предусмотрено");
+            case Stop:
+                graphPlayer.setFrameList(algorithm.process(new Graph(getGraphOrigin())));
+                break;
+        }
     }
 
     // endregion
@@ -220,21 +219,21 @@ public final class MainWindow extends JFrame {
     }
 
     public void showNodesList() {
-        Graph curGraph = graphPlayer.getFrameList().get(graphPlayer.getCurrentFrame());
-        String msg = "";
+        Graph curGraph = graphPlayer.getFrameList() != null ? graphPlayer.getFrameList().get(graphPlayer.getCurrentFrame()) : getGraphOrigin();
+        StringBuilder msg = new StringBuilder();
         for (Node node : curGraph.getNodes()) {
-            msg += node.getDescription() + "\n";
+            msg.append(node.getDescription()).append("\n");
         }
-        JOptionPane.showMessageDialog(this, msg, "Список вершин", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, msg.toString(), "Список вершин", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public void showEdgesList() {
-        Graph curGraph = graphPlayer.getFrameList().get(graphPlayer.getCurrentFrame());
-        String msg = "";
+        Graph curGraph = graphPlayer.getFrameList() != null ? graphPlayer.getFrameList().get(graphPlayer.getCurrentFrame()) : getGraphOrigin();
+        StringBuilder msg = new StringBuilder();
         for (Edge edge : curGraph.getEdges()) {
-            msg += edge.getDescription() + "\n";
+            msg.append(edge.getDescription()).append("\n");
         }
-        JOptionPane.showMessageDialog(this, msg, "Список ребер", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, msg.toString(), "Список ребер", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public void showInstruction() {
@@ -299,9 +298,10 @@ public final class MainWindow extends JFrame {
         toolBar1.setPreferredSize(new Dimension(256, 22));
         content.add(toolBar1, BorderLayout.EAST);
         scrollPane = new JScrollPane();
+        scrollPane.setHorizontalScrollBarPolicy(31);
         toolBar1.add(scrollPane);
         loggerLabel = new JLabel();
-        loggerLabel.setText("Log:\n1\n2");
+        loggerLabel.setText("Log:");
         loggerLabel.setVerticalAlignment(1);
         loggerLabel.setVerticalTextPosition(1);
         scrollPane.setViewportView(loggerLabel);
