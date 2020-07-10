@@ -10,10 +10,12 @@ public final class Node {
     private String name;
     private int radius;
     private Point position;
+    private Color color = null;
 
     public boolean visited = false;
     public boolean highlighted = false;
     public int strongComponentId = -1;
+    public int timeOut = 0;
 
     public Node(Integer id, int x, int y) {
         this.id = id;
@@ -30,6 +32,8 @@ public final class Node {
         this.visited = other.visited;
         this.highlighted = other.highlighted;
         this.strongComponentId = other.strongComponentId;
+        this.timeOut = other.timeOut;
+        this.color = other.color;
     }
 
     public String getName() {
@@ -72,11 +76,24 @@ public final class Node {
         this.position.y = y;
     }
 
+    public Color getColor(){
+        return color;
+    }
+
+    public void setColor(Color color){
+        this.color = color;
+    }
+
     @SuppressWarnings("MethodDoesntCallSuperMethod")
     @Override
     public Node clone() {
         return new Node(this);
     }
 
-
+    public String getDescription() {
+        String componentIdString = (strongComponentId != -1) ? Integer.toString(strongComponentId) : "еще на найден";
+        return "Вершина " + id + " Имя: " + name +
+                " ID компоненты: " + componentIdString +
+                " Позиция на экране: x = " + getX() + " | y = " + getY();
+    }
 }

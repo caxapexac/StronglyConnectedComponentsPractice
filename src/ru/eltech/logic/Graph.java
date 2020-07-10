@@ -14,6 +14,7 @@ public final class Graph {
     private int nextEdgeId;
     private final HashMap<Integer, Node> nodeMap;
     private final HashMap<Integer, Edge> edgeMap;
+    public String state = "";
 
     public Graph() {
         nextNodeId = 1;
@@ -25,6 +26,7 @@ public final class Graph {
     public Graph(Graph other) {
         this.nextNodeId = other.nextNodeId;
         this.nextEdgeId = other.nextEdgeId;
+        this.state = other.state;
         this.nodeMap = new HashMap<>();
         for (Node node : other.getNodes()) nodeMap.put(node.id, node.clone());
         this.edgeMap = new HashMap<>();
@@ -61,6 +63,14 @@ public final class Graph {
 
     public int getEdgesCount() {
         return edgeMap.size();
+    }
+
+    public int getVisitedNodesCount() {
+        int count = 0;
+        for(Node node : getNodes()) {
+            if(node.visited) ++count;
+        }
+        return count;
     }
 
     public Node getNode(Integer nodeId) {
@@ -124,6 +134,7 @@ public final class Graph {
     }
 
     public boolean destroyEdge(Edge edge) {
+        if (edge == null) return false;
         Edge removed = edgeMap.remove(edge.id);
         if (removed == edge) return true;
         edgeMap.put(removed.id, removed);
@@ -180,5 +191,25 @@ public final class Graph {
             p.println(String.format("%s %s", source.getName(), target.getName()));
         }
         p.flush();
+    }
+
+    public String getNodesInComponentById(int strongComponentId) {
+        String nodesStr = "| ";
+        for (Node node : getNodes()) {
+            if (node.strongComponentId == strongComponentId) {
+                nodesStr += node.getName() + " | ";
+            }
+        }
+        return nodesStr;
+    }
+
+    public boolean componentExists(int id) {
+        boolean res = false;
+        for (Node node : getNodes()) {
+            if (node.strongComponentId == id) {
+                res = true;
+            }
+        }
+        return res;
     }
 }

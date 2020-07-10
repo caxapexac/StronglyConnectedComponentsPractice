@@ -11,8 +11,10 @@ public final class GraphEditorMouseMotionListener implements MouseMotionListener
     @Override
     public void mouseDragged(MouseEvent e) {
         GraphEditor graphEditor = (GraphEditor) e.getSource();
-        graphEditor.drag(e.getX(), e.getY());
+        Point pos = graphEditor.canvasToGraphSpace(e.getX(), e.getY());
+        graphEditor.drag(e.getX(), e.getY(), pos.x, pos.y);
         graphEditor.connecting(e.getX(), e.getY());
+        setMouseCursor(graphEditor, e);
     }
 
     @Override
@@ -22,12 +24,12 @@ public final class GraphEditorMouseMotionListener implements MouseMotionListener
     }
 
     private void setMouseCursor(GraphEditor graph, MouseEvent e) {
-        int x = e.getX();
-        int y = e.getY();
+        Point pos = graph.canvasToGraphSpace(e.getX(), e.getY());
 
-        if (graph.isReadOnly) graph.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        else if (graph.findNode(x, y) != null) graph.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        else if (graph.findEdge(x, y) != null) graph.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+        if (graph.isReadOnly) graph.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+        else if (graph.findNode(pos.x, pos.y) != null) graph.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        else if (graph.findEdge(pos.x, pos.y) != null) graph.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+        else if (graph.isMoving()) graph.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
         else if (graph.isConnecting()) graph.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         else if (e.getButton() == MouseEvent.BUTTON1) graph.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
         else graph.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

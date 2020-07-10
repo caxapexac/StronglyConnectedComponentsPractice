@@ -21,12 +21,13 @@ public final class MainMenuBar extends JMenuBar implements ActionListener {
     // TODO
 
     private final JMenu editMenu = new JMenu("Edit");
-    private final JMenuItem nodesMenuItem = new JMenuItem("nodesMenuItem...");
-    private final JMenuItem edgesMenuItem = new JMenuItem("edgesMenuItem...");
+    private final JMenuItem nodesMenuItem = new JMenuItem("Показать список нод...");
+    private final JMenuItem edgesMenuItem = new JMenuItem("Показать список дуг...");
     // TODO
 
     private final JMenu viewMenu = new JMenu("View");
     private final JMenuItem startMenuItem = new JMenuItem("Запустить алгоритм");
+    //private final JMenuItem changeThemeMenuItem = new JMenuItem("Сменить тему");
     // TODO
 
     private final JMenu helpMenu = new JMenu("Help");
@@ -46,6 +47,7 @@ public final class MainMenuBar extends JMenuBar implements ActionListener {
         nodesMenuItem.addActionListener(this);
         edgesMenuItem.addActionListener(this);
         startMenuItem.addActionListener(this);
+        //changeThemeMenuItem.addActionListener(this);
         appMenuItem.addActionListener(this);
         appMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PERIOD, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         authorMenuItem.addActionListener(this);
@@ -62,8 +64,9 @@ public final class MainMenuBar extends JMenuBar implements ActionListener {
         editMenu.add(edgesMenuItem);
         add(editMenu);
 
-        viewMenu.add(startMenuItem);
-        add(viewMenu);
+        //viewMenu.add(startMenuItem);
+        //viewMenu.add(changeThemeMenuItem);
+        //add(viewMenu);
 
         helpMenu.add(appMenuItem);
         helpMenu.add(authorMenuItem);
@@ -89,7 +92,9 @@ public final class MainMenuBar extends JMenuBar implements ActionListener {
         } else if (eSource == edgesMenuItem) {
             parent.showEdgesList();
         } else if (eSource == startMenuItem) {
-            parent.startVisualizing();
+            //parent.startVisualizing();
+        //} else if (eSource == changeThemeMenuItem) {
+            //parent.changeTheme();
         } else if (eSource == appMenuItem) {
             parent.showInstruction();
         } else if (eSource == authorMenuItem) {

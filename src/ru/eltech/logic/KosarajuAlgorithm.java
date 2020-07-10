@@ -10,13 +10,16 @@ public final class KosarajuAlgorithm implements Algorithm {
 
     private ArrayList<Node> timeOutList;
     private FrameList frames;
-    //private int timer = 0;
+    private int timer = 0;
+    private boolean immediateReverse = true;
+    private String currentStep = "";
 
-    public KosarajuAlgorithm() {
-        //вершины по времени выхода в порядке возрастания
-        timeOutList = new ArrayList<Node>();
-        //возвращаемые фреймы
-        frames = new FrameList();
+    public boolean isImmediateReverse() {
+        return immediateReverse;
+    }
+
+    public void setImmediateReverse(boolean immediateReverse) {
+        this.immediateReverse = immediateReverse;
     }
 
     /**
@@ -28,10 +31,13 @@ public final class KosarajuAlgorithm implements Algorithm {
      */
     @Override
     public FrameList process(Graph context) {
+        //вершины по времени выхода в порядке возрастания
         timeOutList = new ArrayList<>();
+        //возвращаемые фреймы
         frames = new FrameList();
-        frames.add(context);
+        frames.add(context, "");
 
+        timer = 0;
         Collection<Node> nodes = context.getNodes();
         for (Node node : nodes) {
             if (!node.visited) {
@@ -45,13 +51,13 @@ public final class KosarajuAlgorithm implements Algorithm {
             MainWindow.log.severe("timeoutsize " + timeOutList.size() + " nodes count " + context.getNodesCount());
         }
 
-        clearVisitedNodes(context);
-        clearHighlightedNodes(context);
-        clearHighlightedEdges(context);
+        clearAll(context);
+        frames.add(context, "Снятие всех выделений, переход к следующему шагу.<br>");
 
-        reverseGraph(context, true);
+        reverseGraph(context, immediateReverse);
 
         clearHighlightedEdges(context);
+        frames.add(context, "Снятие всех выделений, переход к следующему шагу.<br>");
 
         int currentComponentId = 0;
         for (Node currentNode : timeOutList) {
@@ -61,21 +67,21 @@ public final class KosarajuAlgorithm implements Algorithm {
             }
         }
 
-        //сбрасываем все выделения в конце алгоритма
-        clearVisitedNodes(context);
-        clearHighlightedNodes(context);
-        clearHighlightedEdges(context);
-        frames.add(context);
+        clearAll(context);
+        frames.add(context, "Снятие всех выделений, переход к следующему шагу.<br>");
 
-        //возвращаем граф к исходному состоянию за три кадра
-        highlightAllEdges(context);
-        frames.add(context);
-        reverseGraph(context, false);
-        frames.add(context);
-        clearHighlightedEdges(context);
-        frames.add(context);
+        reverseGraph(context, immediateReverse);
 
-        MainWindow.log.info("Алгоритм закончен. " + frames.count() + " итераций");
+        clearHighlightedEdges(context);
+        frames.add(context, "Снятие всех выделений, завершение алгоритма.<br>" +
+                "Алгоритм закончен. " + frames.count() + " итераций");
+
+        String components = "Найдены компоненты со следующими вершинами:<br>";
+        for (int i = 0; context.componentExists(i);i++){
+            components += context.getNodesInComponentById(i) + "<br>";
+        }
+        frames.add(context, components + "<br>");
+        //MainWindow.log.info("Просчет алгоритма закончен. " + frames.count() + " итераций");
         return frames;
     }
 
@@ -86,44 +92,65 @@ public final class KosarajuAlgorithm implements Algorithm {
      */
     private void timeOut(Node startNode, Graph graph) {
         startNode.visited = true;
-        //timer++;
+        timer++;
 
         startNode.highlighted = true;
-        frames.add(graph);//for animation
+        currentStep += "<br>Подсчет времени выхода<br>Текущая вершина: " + startNode.getName() + "<br>";
+        frames.add(graph, currentStep);//for animation
 
         Collection<Edge> edgeList = graph.getEdgesFromNode(startNode);
         Node nextNode = null;
+        currentStep = "";
         for (Edge currentEdge : edgeList) {
 
             currentEdge.highlighted = true;
-            frames.add(graph);
-
             nextNode = graph.getNode(currentEdge.getTarget());
-            if (!nextNode.visited) {
+            currentStep += "Переход в вершину " + nextNode.getName() + "<br>";
+            frames.add(graph, currentStep);
+            currentStep = "";
+
+            if (nextNode.visited) {
+                frames.add(graph, "Вершина " + nextNode.getName() + " уже посещена<br>");
+            } else {
+                currentStep += "Вершина " + nextNode.getName() + " не посещена,&#10;&#13; рекурсивно обходим ее<br>";
                 timeOut(nextNode, graph);
-                //MainWindow.log.info("added " + Integer.toString(timer));
             }
         }
+        startNode.timeOut = timer;
+        currentStep = "Выход из вызова функции обхода&#10;&#13; для вершины " + startNode.getName() + "<br>" +
+                "Вершина добавлена в список &#10;&#13;для поиска компонент, ее время выхода " +
+                timer + "<br>";
+        frames.add(graph, currentStep);
+
         timeOutList.add(startNode);
-        //timer++;
+        currentStep = "";
+        timer++;
     }
 
     /**
      * @param graph
      * @implNote Разворачивает ребра графа
      */
-    private void reverseGraph(Graph graph, boolean animate) {
+    private void reverseGraph(Graph graph, boolean inOneStep) {
+
+        if (inOneStep) {
+            highlightAllEdges(graph);
+            frames.add(graph, "Инвертирование всех ребер");
+            for (Edge current : graph.getEdges()) {
+                current.invert();
+            }
+            frames.add(graph);
+            clearHighlightedEdges(graph);
+            frames.add(graph);
+            return;
+        }
         for (Edge current : graph.getEdges()) {
-            if (animate) {
-                current.highlighted = true;
-                frames.add(graph);//for animation
-            }
-
+            current.highlighted = true;
+            String from = graph.getNode(current.getSource()).getName();
+            String to = graph.getNode(current.getTarget()).getName();
+            frames.add(graph, "Инвертирование ребра из " + from + " в " + to + "<br>");//for animation
             current.invert();
-
-            if (animate) {
-                frames.add(graph);
-            }
+            frames.add(graph);
         }
     }
 
@@ -137,22 +164,29 @@ public final class KosarajuAlgorithm implements Algorithm {
 
         node.strongComponentId = componentId;
         node.visited = true;
-
         node.highlighted = true;
-        frames.add(graph);
+        frames.add(graph,"Поиск компоненты сильной связности с id " + componentId);
 
         Collection<Edge> edgeList = graph.getEdgesFromNode(node);
         for (Edge currentEdge : edgeList) {
 
             currentEdge.highlighted = true;
-            frames.add(graph);
-
             Node nextNode = graph.getNode(currentEdge.getTarget());
+            frames.add(graph, "Переход в вершину " +
+                    graph.getNode(currentEdge.getTarget()).getName() + "<br>");
+
             if (nextNode.strongComponentId == -1) {
+                frames.add(graph, "Вершина " + nextNode.getName() + " еще не в компоненте"+
+                        ". Выполняется рекурсивный вызов функции поиска компоненты для вершины " +
+                        nextNode.getName() + "<br>");
                 findComponent(componentId, nextNode, graph);
+//                frames.add(graph, "Найдена компонента сильной связности с id "+nextNode.strongComponentId+
+//                        "<br>В нее входят вершины " + graph.getNodesInComponentById(nextNode.strongComponentId) + "<br>");
             } else if (nextNode.strongComponentId != node.strongComponentId) {
                 currentEdge.highlighted = false;
-                frames.add(graph);
+                currentEdge.connectsStrongComponents = true;
+                frames.add(graph,"Вершины " + node.getName() + " и " + nextNode.getName() +
+                        " в разных компонентах, выделяем ребро между ними.<br>");
             }
         }
     }
@@ -180,5 +214,15 @@ public final class KosarajuAlgorithm implements Algorithm {
                 graph.getEdges()) {
             edge.highlighted = true;
         }
+    }
+
+    /**
+     * @param graph
+     * @implNote Стирает все выделения, отмечает все вершины как непосещенные
+     */
+    private void clearAll(Graph graph) {
+        clearVisitedNodes(graph);
+        clearHighlightedNodes(graph);
+        clearHighlightedEdges(graph);
     }
 }

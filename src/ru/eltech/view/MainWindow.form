@@ -9,115 +9,6 @@
     </properties>
     <border type="none"/>
     <children>
-      <toolbar id="3861e">
-        <constraints border-constraint="North"/>
-        <properties>
-          <minimumSize width="613" height="64"/>
-          <orientation value="1"/>
-          <preferredSize width="777" height="100"/>
-        </properties>
-        <border type="none"/>
-        <children>
-          <grid id="9cd7" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
-            <constraints/>
-            <properties>
-              <preferredSize width="10" height="50"/>
-            </properties>
-            <border type="none"/>
-            <children>
-              <component id="9a5d5" class="javax.swing.JButton" binding="toolBarAutoButton">
-                <constraints/>
-                <properties>
-                  <icon value="resources/icons/repeat-24px.png"/>
-                  <text value=""/>
-                </properties>
-              </component>
-              <component id="9e834" class="javax.swing.JButton" binding="toolBarStartButton">
-                <constraints/>
-                <properties>
-                  <icon value="resources/icons/play_arrow-24px.png"/>
-                  <text value=""/>
-                </properties>
-              </component>
-              <component id="cc9f4" class="javax.swing.JButton" binding="toolBarStepBackButton">
-                <constraints/>
-                <properties>
-                  <icon value="resources/icons/skip_previous-24px.png"/>
-                  <text value=""/>
-                </properties>
-              </component>
-              <component id="d4e51" class="javax.swing.JButton" binding="toolBarStepForwardButton">
-                <constraints/>
-                <properties>
-                  <icon value="resources/icons/skip_next-24px.png"/>
-                  <text value=""/>
-                </properties>
-              </component>
-              <component id="d369f" class="javax.swing.JButton" binding="toolBarPauseButton">
-                <constraints/>
-                <properties>
-                  <icon value="resources/icons/pause-24px.png"/>
-                  <text value=""/>
-                </properties>
-              </component>
-              <component id="cd92" class="javax.swing.JButton" binding="toolBarStopButton">
-                <constraints/>
-                <properties>
-                  <icon value="resources/icons/stop-24px.png"/>
-                  <text value=""/>
-                </properties>
-              </component>
-              <component id="7591c" class="javax.swing.JSlider" binding="toolBarSpeedSlider">
-                <constraints/>
-                <properties>
-                  <maximum value="5000"/>
-                  <maximumSize width="300" height="31"/>
-                  <minimum value="1"/>
-                  <paintLabels value="false"/>
-                  <paintTicks value="true"/>
-                  <value value="1000"/>
-                </properties>
-              </component>
-              <component id="1aef3" class="javax.swing.JLabel">
-                <constraints/>
-                <properties>
-                  <text value="Delay"/>
-                </properties>
-              </component>
-              <component id="6e29" class="javax.swing.JToolBar$Separator">
-                <constraints/>
-                <properties/>
-              </component>
-              <component id="3f70b" class="javax.swing.JToolBar$Separator">
-                <constraints/>
-                <properties/>
-              </component>
-            </children>
-          </grid>
-          <grid id="b892c" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
-            <constraints/>
-            <properties>
-              <minimumSize width="70" height="10"/>
-              <preferredSize width="206" height="10"/>
-            </properties>
-            <border type="none"/>
-            <children>
-              <component id="a485b" class="javax.swing.JLabel">
-                <constraints/>
-                <properties>
-                  <text value="Progress"/>
-                </properties>
-              </component>
-              <component id="c0917" class="javax.swing.JProgressBar" binding="bottomProgressBar">
-                <constraints/>
-                <properties>
-                  <value value="30"/>
-                </properties>
-              </component>
-            </children>
-          </grid>
-        </children>
-      </toolbar>
       <component id="34de1" class="ru.eltech.view.GraphEditor" binding="graphEditor">
         <constraints border-constraint="Center"/>
         <properties>
@@ -133,11 +24,33 @@
         </properties>
         <border type="none"/>
         <children>
-          <component id="f229f" class="javax.swing.JTextPane" binding="loggerTextPane">
+          <scrollpane id="1c409" binding="scrollPane">
             <constraints/>
-            <properties/>
-          </component>
+            <properties>
+              <horizontalScrollBarPolicy value="31"/>
+              <preferredSize width="64" height="16"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <component id="5d05b" class="javax.swing.JTextPane" binding="loggerPane">
+                <constraints/>
+                <properties>
+                  <editable value="false"/>
+                </properties>
+              </component>
+            </children>
+          </scrollpane>
         </children>
+      </toolbar>
+      <toolbar id="1ee9" class="ru.eltech.view.GraphPlayerToolBar" binding="graphPlayerToolBar">
+        <constraints border-constraint="North"/>
+        <properties>
+          <maximumSize width="10000" height="10000"/>
+          <minimumSize width="10" height="10"/>
+          <preferredSize width="1000" height="100"/>
+        </properties>
+        <border type="none"/>
+        <children/>
       </toolbar>
     </children>
   </grid>

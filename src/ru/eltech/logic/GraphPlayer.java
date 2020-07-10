@@ -1,6 +1,6 @@
 package ru.eltech.logic;
 
-import ru.eltech.view.GraphPlayerListener;
+import ru.eltech.view.GraphPlayerToolBar;
 import ru.eltech.view.MainWindow;
 
 import java.util.Timer;
@@ -11,109 +11,132 @@ import java.util.TimerTask;
  */
 public final class GraphPlayer {
     private Timer timer = new Timer();
-    private final GraphPlayerListener listener;
     private FrameList frameList;
-    private State state = State.Empty;
-    private int currentFrame = 0;
-    private long delay = 1000;
+    private State state = State.Stop;
+    private volatile int currentFrame = 0;
+    private int delay = 300;
+    public boolean sliderChanged = false;
+    public boolean stepForwardInPause = false;
+    public boolean stepBackwardInPause = false;
 
-    public GraphPlayer(GraphPlayerListener listener) {
-        this.listener = listener;
+    private final GraphPlayerToolBar toolBar;
+
+    public GraphPlayer(GraphPlayerToolBar toolBar) {
+        this.toolBar = toolBar;
+    }
+
+    public FrameList getFrameList() {
+        return frameList;
     }
 
     public void setFrameList(FrameList frameList) {
-        MainWindow.log.info("Frame list setup");
+        //MainWindow.log.info("Frame list setup");
         this.frameList = frameList;
-    }
-
-    public long getDelay() {
-        return delay;
-    }
-
-    public void setDelay(long delay) {
-        this.delay = delay;
+        toolBar.playerChanged(this);
     }
 
     public State getState() {
         return state;
     }
 
-    public void setState(State state) {
+    public synchronized void setState(State state) {
         if (this.state == state) return;
         switch (state) {
-            case Empty:
-                // TODO
+            case Play:
+                MainWindow.log.info("Старт анимации");
+                if (frameList != null && currentFrame == frameList.count() - 1) currentFrame = 0;
+                timer.cancel();
+                timer = new Timer();
+                timer.schedule(new PlayerTask(), delay);
                 break;
-            case Started:
-                if (this.state == State.Stoped) currentFrame = 0;
-                play();
+            case Pause:
+                //MainWindow.log.info("Пауза анимации на шаге: <br>");
+                timer.cancel();
                 break;
-            case Paused:
-                pause();
-                break;
-            case Stoped:
-                stop();
+            case Stop:
+                MainWindow.log.warning("Стоп анимации");
+                currentFrame = 0;
+                timer.cancel();
                 break;
         }
         this.state = state;
-        listener.stateChange(state);
+        toolBar.playerChanged(this);
     }
 
-    private void play() {
-        MainWindow.log.info("Старт таймера");
-        timer.cancel();
-        timer = new Timer();
-        timer.schedule(new PlayerTask(), delay);
+    public int getCurrentFrame(){
+        return currentFrame;
     }
 
-    private void pause() {
-        MainWindow.log.info("Пауза таймера");
-        timer.cancel();
+    public void setCurrentFrame(int currentFrame) {
+        this.currentFrame = currentFrame;
+        toolBar.playerChanged(this);
     }
 
-    private void stop() {
-        MainWindow.log.warning("Стоп таймера");
-        timer.cancel();
+    public int getDelay() {
+        return delay;
     }
 
-    public void stepForward() {
-        if (frameList == null || state == State.Empty || state == State.Stoped) return;
+    public void setDelay(int delay) {
+        this.delay = delay;
+        sliderChanged = true;
+        toolBar.playerChanged(this);
+    }
+
+    /**
+     *
+     * @return Переключился ли фрейм
+     */
+    public synchronized boolean stepForward() {
+        if (frameList == null || state == State.Stop) return false;
         if (currentFrame >= frameList.count() - 1) {
-            MainWindow.log.warning("Фреймы кончились");
-            setState(State.Paused);
-            return;
+            MainWindow.log.info("Конец анимации");
+            frameList.get(frameList.count() - 1).state = "";
+            currentFrame = frameList.count() - 1;
+            setState(State.Pause);
+            return false;
         }
-        Graph graph = frameList.get(++currentFrame);
-        listener.frameChanged(graph);
+        currentFrame++;
+        stepForwardInPause = true;
+        toolBar.playerChanged(this);
+        //MainWindow.log.info(String.valueOf(frameList.get(getCurrentFrame()).state));
+        return true;
     }
 
-    public void stepBackward() {
-        if(frameList == null || state == State.Empty || state == State.Stoped) return;
-        if(currentFrame <= 0){
-            MainWindow.log.warning("Нет предыдущего фрейма");
-            setState(State.Paused);
-            return;
+    /**
+     *
+     * @return Переключился ли фрейм
+     */
+    public synchronized boolean stepBackward() {
+        if (frameList == null || state == State.Stop) return false;
+        if (currentFrame <= 0) {
+            //MainWindow.log.warning("Нет предыдущего фрейма");
+            currentFrame = 0;
+            setState(State.Pause);
+            return false;
         }
-        Graph graph = frameList.get(--currentFrame);
-        listener.frameChanged(graph);
+        currentFrame--;
+        stepBackwardInPause = true;
+        toolBar.playerChanged(this);
+        //MainWindow.log.info(String.valueOf(frameList.get(getCurrentFrame()).state));
+        return true;
     }
 
     public class PlayerTask extends TimerTask {
 
         @Override
         public void run() {
-            stepForward();
-            timer.cancel();
-            timer = new Timer();
-            timer.schedule(new PlayerTask(), delay);
+            if (stepForward()) {
+                timer.cancel();
+                timer = new Timer();
+                timer.schedule(new PlayerTask(), delay);
+            }
         }
     }
 
 
     public enum State {
-        Empty,
-        Started,
-        Paused,
-        Stoped
+        Play,
+        Pause,
+        Stop
     }
 }
