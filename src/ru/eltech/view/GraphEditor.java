@@ -460,7 +460,9 @@ public final class GraphEditor extends GraphVisualizer {
 
     public void changeNodeText(Integer id) {
         if (isReadOnly) return;
-        //String name = JOptionPane.showInputDialog(this, "Введите новое имя", "Модификация", JOptionPane.QUESTION_MESSAGE);
+        String name = JOptionPane.showInputDialog(this, "Введите новое имя", "Модификация", JOptionPane.QUESTION_MESSAGE);
+        graph.getNode(id).setName(name);
+        repaint();
         // TODO
     }
 
