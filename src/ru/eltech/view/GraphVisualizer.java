@@ -174,7 +174,11 @@ public class GraphVisualizer extends JPanel {
      * Позволяет настроить стиль заливки ноды в {@link GraphEditor}
      */
     protected void decorateNodeInner(Graphics2D g, Node node) {
-        g.setColor(Color.GRAY);
+        if(node.getColor()!=null){
+            g.setColor(node.getColor());
+        }else {
+            g.setColor(Color.GRAY);
+        }
         g.setStroke(DEFAULT_STROKE);
     }
 

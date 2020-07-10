@@ -10,6 +10,7 @@ public final class Node {
     private String name;
     private int radius;
     private Point position;
+    private Color color = null;
 
     public boolean visited = false;
     public boolean highlighted = false;
@@ -32,6 +33,7 @@ public final class Node {
         this.highlighted = other.highlighted;
         this.strongComponentId = other.strongComponentId;
         this.timeOut = other.timeOut;
+        this.color = other.color;
     }
 
     public String getName() {
@@ -72,6 +74,14 @@ public final class Node {
 
     public void setY(int y) {
         this.position.y = y;
+    }
+
+    public Color getColor(){
+        return color;
+    }
+
+    public void setColor(Color color){
+        this.color = color;
     }
 
     @SuppressWarnings("MethodDoesntCallSuperMethod")
