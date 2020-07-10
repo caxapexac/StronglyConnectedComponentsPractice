@@ -28,15 +28,14 @@
             <constraints/>
             <properties>
               <horizontalScrollBarPolicy value="31"/>
+              <preferredSize width="64" height="16"/>
             </properties>
             <border type="none"/>
             <children>
-              <component id="12a81" class="javax.swing.JLabel" binding="loggerLabel">
+              <component id="5d05b" class="javax.swing.JTextPane" binding="loggerPane">
                 <constraints/>
                 <properties>
-                  <text value="Log:"/>
-                  <verticalAlignment value="1"/>
-                  <verticalTextPosition value="1"/>
+                  <editable value="false"/>
                 </properties>
               </component>
             </children>

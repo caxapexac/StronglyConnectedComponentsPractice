@@ -1,30 +1,43 @@
 package ru.eltech.view;
 
 import javax.swing.*;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
+import java.util.ArrayList;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 public final class LoggerTextAreaHandler extends Handler {
     private final JScrollPane scrollPane;
-    private final JLabel textLabel;
+    private final JTextPane textPane;
+    private final ArrayList<String> messages = new ArrayList<>();
 
-    public LoggerTextAreaHandler(JScrollPane scrollPane, JLabel textLabel) {
+    public LoggerTextAreaHandler(JScrollPane scrollPane, JTextPane textPane) {
         this.scrollPane = scrollPane;
-        this.textLabel = textLabel;
+        this.textPane = textPane;
+        this.textPane.setContentType("text/html");
+        render();
     }
 
     @Override
     public void publish(LogRecord record) {
-        String previous = "<html>Log:<br>";
-        if (textLabel.getText().contains("</html>")) previous = textLabel.getText().substring(0, textLabel.getText().indexOf("</html>"));
-        Level cur = record.getLevel();
-        String levelLabel = cur == Level.INFO ? "" : record.getLevel().getLocalizedName();
-        textLabel.setText(previous + String.format("%s%s<br></html>", levelLabel, record.getMessage()));
-        textLabel.setText(previous + String.format("%s %s<br></html>", record.getLevel().getLocalizedName(), record.getMessage()));
-        SwingUtilities.invokeLater(() -> scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum()));
+        String levelLabel = record.getLevel() == Level.INFO ? "" : record.getLevel().getLocalizedName();
+        messages.add(String.format("%s %s", levelLabel, record.getMessage()));
+        render();
+    }
+
+    private void render() {
+        StringBuilder content = new StringBuilder();
+        //content.append("<html><body style=\"text-align: justify; text-justify: inter-word;\">Log:<br>");
+        content.append("<html><body>Log:<br>");
+        for (String message: messages) {
+            content.append(message);
+            if (!message.trim().isEmpty()) content.append("<br>");
+        }
+        content.append("</body></html>");
+        textPane.setText(content.toString());
+        // Хак для того, чтобы скроллбар оставался строго внизу
+        JScrollBar scrollBar = scrollPane.getVerticalScrollBar();
+        if (!scrollBar.getValueIsAdjusting()) SwingUtilities.invokeLater(() -> scrollBar.setValue(scrollBar.getMaximum()));
     }
 
     @Override
@@ -34,6 +47,11 @@ public final class LoggerTextAreaHandler extends Handler {
 
     @Override
     public void close() throws SecurityException {
-        textLabel.setText("");
+         clear();
+    }
+
+    public void clear() {
+        messages.clear();
+        render();
     }
 }

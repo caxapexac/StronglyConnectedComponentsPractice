@@ -8,7 +8,6 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
-import java.util.ArrayList;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -17,7 +16,7 @@ public final class MainWindow extends JFrame {
     public static Logger log = Logger.getLogger(MainWindow.class.getName());
 
     private JPanel content;
-    private JLabel loggerLabel;
+    private JTextPane loggerPane;
     private GraphEditor graphEditor;
     private GraphPlayerToolBar graphPlayerToolBar;
     private JScrollPane scrollPane;
@@ -25,6 +24,7 @@ public final class MainWindow extends JFrame {
 
     private Graph graphOrigin;
     private GraphPlayer graphPlayer;
+    private LoggerTextAreaHandler loggerTextAreaHandler;
 
     private final KosarajuAlgorithm algorithm = new KosarajuAlgorithm();
 
@@ -65,7 +65,8 @@ public final class MainWindow extends JFrame {
         graphOrigin = new Graph();
         graphPlayer = new GraphPlayer(graphPlayerToolBar);
         graphPlayerToolBar.setParent(this);
-        log.addHandler(new LoggerTextAreaHandler(scrollPane, loggerLabel));
+        loggerTextAreaHandler = new LoggerTextAreaHandler(scrollPane, loggerPane);
+        log.addHandler(loggerTextAreaHandler);
         deserializeGraph(new File(AUTOSAVE_FILE), true);
         scrolling = new JScrollPane(graphEditor,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
@@ -245,7 +246,7 @@ public final class MainWindow extends JFrame {
     }
 
     public void clearLog() {
-        loggerLabel.setText("<html>Log:<br></html>");
+        loggerTextAreaHandler.clear();
     }
 
     //endregion
@@ -299,12 +300,11 @@ public final class MainWindow extends JFrame {
         content.add(toolBar1, BorderLayout.EAST);
         scrollPane = new JScrollPane();
         scrollPane.setHorizontalScrollBarPolicy(31);
+        scrollPane.setPreferredSize(new Dimension(64, 16));
         toolBar1.add(scrollPane);
-        loggerLabel = new JLabel();
-        loggerLabel.setText("Log:");
-        loggerLabel.setVerticalAlignment(1);
-        loggerLabel.setVerticalTextPosition(1);
-        scrollPane.setViewportView(loggerLabel);
+        loggerPane = new JTextPane();
+        loggerPane.setEditable(false);
+        scrollPane.setViewportView(loggerPane);
         graphPlayerToolBar = new GraphPlayerToolBar();
         graphPlayerToolBar.setMaximumSize(new Dimension(10000, 10000));
         graphPlayerToolBar.setMinimumSize(new Dimension(10, 10));
