@@ -1,6 +1,7 @@
 # StronglyConnectedComponentsPractice
 Учебная практика по java
 
+## [Документация](doc/index.html)
 
 ## План
 1-ая неделя:

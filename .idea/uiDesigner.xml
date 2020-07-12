@@ -130,9 +130,15 @@
       <item class="javax.swing.JMenuItem" icon="" removable="true" auto-create-binding="false" can-attach-label="false" is-container="true">
         <default-constraints vsize-policy="3" hsize-policy="3" anchor="0" fill="0" />
       </item>
-      <item class="ru.eltech.GraphEditor" icon="/com/intellij/uiDesigner/icons/panel.png" removable="true" auto-create-binding="false" can-attach-label="false">
+      <item class="ru.eltech.view.GraphEditor" icon="/com/intellij/uiDesigner/icons/panel.png" removable="true" auto-create-binding="false" can-attach-label="false">
+        <default-constraints vsize-policy="3" hsize-policy="3" anchor="0" fill="0" />
+      </item>
+      <item class="ru.eltech.view.GraphPlayerToolBar" icon="/com/intellij/uiDesigner/icons/toolbar.png" removable="true" auto-create-binding="false" can-attach-label="false" is-container="true">
         <default-constraints vsize-policy="3" hsize-policy="3" anchor="0" fill="0" />
       </item>
     </group>
+  </component>
+  <component name="uidesigner-configuration">
+    <option name="INSTRUMENT_CLASSES" value="false" />
   </component>
 </project>

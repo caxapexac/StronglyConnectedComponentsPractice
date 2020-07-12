@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="ru.eltech.view.MainWindow">
+  <grid id="27dc6" binding="content" layout-manager="BorderLayout" hgap="0" vgap="0">
+    <constraints>
+      <xy x="20" y="52" width="676" height="400"/>
+    </constraints>
+    <properties>
+      <minimumSize width="622" height="400"/>
+    </properties>
+    <border type="none"/>
+    <children>
+      <component id="34de1" class="ru.eltech.view.GraphEditor" binding="graphEditor">
+        <constraints border-constraint="Center"/>
+        <properties>
+          <minimumSize width="100" height="10"/>
+          <preferredSize width="512" height="10"/>
+        </properties>
+      </component>
+      <toolbar id="3e1b9">
+        <constraints border-constraint="East"/>
+        <properties>
+          <minimumSize width="64" height="22"/>
+          <preferredSize width="256" height="22"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <scrollpane id="1c409" binding="scrollPane">
+            <constraints/>
+            <properties>
+              <horizontalScrollBarPolicy value="31"/>
+              <preferredSize width="64" height="16"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <component id="5d05b" class="javax.swing.JTextPane" binding="loggerPane">
+                <constraints/>
+                <properties>
+                  <editable value="false"/>
+                </properties>
+              </component>
+            </children>
+          </scrollpane>
+        </children>
+      </toolbar>
+      <toolbar id="1ee9" class="ru.eltech.view.GraphPlayerToolBar" binding="graphPlayerToolBar">
+        <constraints border-constraint="North"/>
+        <properties>
+          <maximumSize width="10000" height="10000"/>
+          <minimumSize width="10" height="10"/>
+          <preferredSize width="1000" height="100"/>
+        </properties>
+        <border type="none"/>
+        <children/>
+      </toolbar>
+    </children>
+  </grid>
+</form>
